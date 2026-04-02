@@ -8,6 +8,9 @@ export function draw(ctx, state) {
 
   // Draw highlighted tile
   drawHighlightedTile(ctx, state);
+
+  // Draw debug circle at exact mouse position
+  drawDebugMouse(ctx, state);
 }
 
 function drawGrid(ctx, state) {
@@ -45,4 +48,30 @@ function drawHighlightedTile(ctx, state) {
   ctx.strokeStyle = '#64c8ff';
   ctx.lineWidth = 2;
   ctx.strokeRect(tileX, tileY, gridSize, gridSize);
+}
+
+/**
+ * DEBUG: Draw a circle at the exact mouse position
+ * This helps verify the input system is running at expected frame rates
+ * and that mouse coordinates are being tracked accurately
+ */
+function drawDebugMouse(ctx, state) {
+  const x = state.mouse.x;
+  const y = state.mouse.y;
+
+  // Draw small circle at exact mouse position
+  ctx.fillStyle = '#ff00ff';
+  ctx.beginPath();
+  ctx.arc(x, y, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Draw velocity indicator (small line showing delta)
+  if (state.mouse.deltaX !== 0 || state.mouse.deltaY !== 0) {
+    ctx.strokeStyle = '#ffff00';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + state.mouse.deltaX * 2, y + state.mouse.deltaY * 2);
+    ctx.stroke();
+  }
 }

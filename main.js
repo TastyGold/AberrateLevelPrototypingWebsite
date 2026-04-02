@@ -5,11 +5,12 @@ import { setupInputHandlers } from './input.js';
 let canvas = document.getElementById('editor');
 let ctx = canvas.getContext('2d');
 let container = document.getElementById('canvasContainer');
+let lastTime = Date.now();
 
 // Resize canvas to fit container
 function resizeCanvas() {
-  canvas.width = container.clientWidth;
-  canvas.height = container.clientHeight;
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
 }
 
 resizeCanvas();
@@ -20,12 +21,17 @@ setupInputHandlers(canvas, state);
 
 // Main game loop
 function loop() {
-  // Update state (to be implemented)
 
-  // Render
-  draw(ctx, state);
+    let dt = Date.now() - lastTime;
+    lastTime = Date.now();
+    console.log(`Delta time: ${dt}ms`);
 
-  requestAnimationFrame(loop);
+    // Update state (to be implemented)
+
+    // Render
+    draw(ctx, state);
+
+    requestAnimationFrame(loop);
 }
 
 loop();
