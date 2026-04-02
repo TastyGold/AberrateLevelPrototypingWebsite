@@ -8,8 +8,8 @@ export const config = {
   // Pan speed when middle-dragging (pixels per pixel of mouse movement)
   panSpeed: 1.0,
   // Min and max zoom levels
-  minZoom: 0.1,
-  maxZoom: 10,
+  minZoom: 0.3,
+  maxZoom: 5,
 };
 
 export const state = {
@@ -137,7 +137,7 @@ export function zoom(zoomDelta, screenX, screenY, canvasWidth, canvasHeight) {
   const worldY = (screenY - canvasHeight / 2) / state.camera.zoom + state.camera.y;
 
   // Update zoom level
-  const newZoom = state.camera.zoom + zoomDelta * config.zoomSpeed;
+  const newZoom = state.camera.zoom * (1 + zoomDelta * config.zoomSpeed);
   state.camera.zoom = Math.max(config.minZoom, Math.min(config.maxZoom, newZoom));
 
   // Adjust camera position to keep world point under cursor
