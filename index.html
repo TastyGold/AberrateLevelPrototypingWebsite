@@ -2,13 +2,41 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>MMCC2041</title>
+<title>Level Editor</title>
 <link href="style.css" rel="stylesheet" />
-<script src="script.js"></script>
 </head>
 <body>
-<h1>Hiiiiii I am john aberrate</h1>
-<canvas></canvas>
-<button id="colorButton">Change Color</button>
+<div id="app">
+  <!-- Top Bar -->
+  <div id="topBar" class="bar">
+    <div class="bar-content">
+      <h1>Level Editor</h1>
+      <div class="level-info">
+        <input type="text" id="levelName" placeholder="Level Name" value="Untitled">
+      </div>
+      <div class="level-actions">
+        <button id="importBtn">Import</button>
+        <button id="exportBtn">Export</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canvas Area -->
+  <div id="canvasContainer">
+    <canvas id="editor"></canvas>
+  </div>
+
+  <!-- Bottom Bar (Tools) -->
+  <div id="bottomBar" class="bar">
+    <div class="bar-content">
+      <button class="tool-btn active" data-tool="select">Select</button>
+      <button class="tool-btn" data-tool="tile">Place Tile</button>
+      <button class="tool-btn" data-tool="entity">Place Entity</button>
+      <button class="tool-btn" data-tool="erase">Erase</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="main.js"></script>
 </body>
 </html>
