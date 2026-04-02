@@ -24,7 +24,6 @@ function loop() {
 
     let dt = Date.now() - lastTime;
     lastTime = Date.now();
-    console.log(`Delta time: ${dt}ms`);
 
     // Update state (to be implemented)
 

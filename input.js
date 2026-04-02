@@ -1,19 +1,16 @@
 /**
  * Input handlers that mutate the editor state
- * Handles mouse movement, clicks, and UI interactions
+ * Handles mouse movement, clicks, keyboard, and UI interactions
  */
 
-import { mouseDown, mouseUp } from './editor.js';
+import { mouseDown, mouseUp, keyDown, keyUp, panCamera, zoom } from './editor.js';
 
 export function setupInputHandlers(canvas, state) {
-  // Track previous mouse position for delta calculation
-  let prevMouseX = 0;
-  let prevMouseY = 0;
-
   /**
    * MOUSE MOVEMENT
    * Called when mouse moves anywhere on the canvas
    * Updates: mouse position, grid position, and mouse delta (velocity)
+   * Also handles camera panning when middle mouse or alt+left is held
    */
   canvas.addEventListener('mousemove', (event) => {
     const rect = canvas.getBoundingClientRect();
@@ -32,9 +29,17 @@ export function setupInputHandlers(canvas, state) {
     state.mouse.deltaX = deltaX;
     state.mouse.deltaY = deltaY;
 
-    // Calculate which grid tile the mouse is over
+    // Calculate which grid tile the mouse is over (before applying zoom)
+    // TODO: Convert screen position to world position using camera for accurate grid detection
     state.mouse.gridX = Math.floor(x / state.gridSize);
     state.mouse.gridY = Math.floor(y / state.gridSize);
+
+    // Handle camera panning with middle mouse or alt+left mouse
+    if (state.input.isMiddleMouseDown) {
+      panCamera(-deltaX, -deltaY);
+    } else if (state.input.isAltDown && state.input.isLeftMouseDown) {
+      panCamera(-deltaX, -deltaY);
+    }
   });
 
   /**
@@ -54,6 +59,41 @@ export function setupInputHandlers(canvas, state) {
    */
   canvas.addEventListener('mouseup', (event) => {
     mouseUp(event.button);
+  });
+
+  /**
+   * MOUSE WHEEL
+   * Handles zoom in/out when scrolling
+   * Zoom is centered on the current mouse position
+   */
+  canvas.addEventListener('wheel', (event) => {
+    event.preventDefault(); // Prevent default scroll behavior
+
+    // Determine zoom direction: negative deltaY = scroll up = zoom in
+    const zoomDirection = event.deltaY > 0 ? -1 : 1;
+
+    // Get canvas dimensions for coordinate conversion
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+
+    // Call zoom function with current mouse position and canvas dimensions
+    zoom(zoomDirection, state.mouse.x, state.mouse.y, canvasWidth, canvasHeight);
+  });
+
+  /**
+   * KEYBOARD - KEY DOWN
+   * Tracks modifier keys like Alt for alt+drag camera panning
+   */
+  document.addEventListener('keydown', (event) => {
+    keyDown(event.key);
+  });
+
+  /**
+   * KEYBOARD - KEY UP
+   * Stops tracking modifier keys
+   */
+  document.addEventListener('keyup', (event) => {
+    keyUp(event.key);
   });
 
   /**

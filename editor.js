@@ -1,3 +1,17 @@
+/**
+ * Configuration variables for editor behavior
+ * Adjust these to fine-tune feel and responsiveness
+ */
+export const config = {
+  // Zoom speed when scrolling (units per scroll wheel tick)
+  zoomSpeed: 0.1,
+  // Pan speed when middle-dragging (pixels per pixel of mouse movement)
+  panSpeed: 1.0,
+  // Min and max zoom levels
+  minZoom: 0.1,
+  maxZoom: 10,
+};
+
 export const state = {
   // Grid properties
   gridSize: 40,
@@ -27,6 +41,13 @@ export const state = {
     y: 0,
     zoom: 1,
   },
+
+  // Input state tracking
+  input: {
+    isMiddleMouseDown: false,
+    isAltDown: false,
+    isLeftMouseDown: false,
+  },
 };
 
 /**
@@ -36,28 +57,92 @@ export const state = {
  * TODO: Implement tile placing logic here when selectedTool is 'tile'
  * TODO: Implement entity placing logic when selectedTool is 'entity'
  * TODO: Implement erasing logic when selectedTool is 'erase'
- * TODO: Implement camera pan logic when middle mouse is held
  */
 export function mouseDown(button) {
-  // TODO: Handle left click (button === 0)
+  // Handle middle click for camera panning
+  if (button === 1) {
+    state.input.isMiddleMouseDown = true;
+    return;
+  }
+
+  // Handle left click
   if (button === 0) {
+    state.input.isLeftMouseDown = true;
     // Check selectedTool and perform action
     // if (state.selectedTool === 'tile') { ... }
     // if (state.selectedTool === 'entity') { ... }
   }
-  // TODO: Handle middle click (button === 1) for camera pan
   // TODO: Handle right click (button === 2)
 }
 
 /**
  * Handle mouse button release
  * @param {number} button - Mouse button (0=left, 1=middle, 2=right)
- * 
- * TODO: Clean up any ongoing operations from mouseDown
  */
 export function mouseUp(button) {
-  // TODO: Stop camera panning if it was active
-  // TODO: Finalize any editing operations
+  // Stop camera panning
+  if (button === 1) {
+    state.input.isMiddleMouseDown = false;
+    return;
+  }
+
+  // Handle left click release
+  if (button === 0) {
+    state.input.isLeftMouseDown = false;
+    // TODO: Finalize any editing operations
+  }
+}
+
+/**
+ * Handle keyboard key down
+ * @param {string} key - The key that was pressed
+ */
+export function keyDown(key) {
+  if (key.toLowerCase() === 'alt') {
+    state.input.isAltDown = true;
+  }
+}
+
+/**
+ * Handle keyboard key up
+ * @param {string} key - The key that was released
+ */
+export function keyUp(key) {
+  if (key.toLowerCase() === 'alt') {
+    state.input.isAltDown = false;
+  }
+}
+
+/**
+ * Pan the camera (move view)
+ * @param {number} deltaX - Amount to move camera in X (screen pixels)
+ * @param {number} deltaY - Amount to move camera in Y (screen pixels)
+ */
+export function panCamera(deltaX, deltaY) {
+  state.camera.x += deltaX * config.panSpeed;
+  state.camera.y += deltaY * config.panSpeed;
+}
+
+/**
+ * Zoom the camera relative to a point on screen
+ * @param {number} zoomDelta - Zoom direction/amount (-1 for zoom out, 1 for zoom in)
+ * @param {number} screenX - Screen X coordinate to zoom toward (where cursor is)
+ * @param {number} screenY - Screen Y coordinate to zoom toward (where cursor is)
+ * @param {number} canvasWidth - Width of canvas (for coordinate conversion)
+ * @param {number} canvasHeight - Height of canvas (for coordinate conversion)
+ */
+export function zoom(zoomDelta, screenX, screenY, canvasWidth, canvasHeight) {
+  // Convert screen position to world position BEFORE zoom
+  const worldX = (screenX - canvasWidth / 2) / state.camera.zoom + state.camera.x;
+  const worldY = (screenY - canvasHeight / 2) / state.camera.zoom + state.camera.y;
+
+  // Update zoom level
+  const newZoom = state.camera.zoom + zoomDelta * config.zoomSpeed;
+  state.camera.zoom = Math.max(config.minZoom, Math.min(config.maxZoom, newZoom));
+
+  // Adjust camera position to keep world point under cursor
+  state.camera.x = worldX - (screenX - canvasWidth / 2) / state.camera.zoom;
+  state.camera.y = worldY - (screenY - canvasHeight / 2) / state.camera.zoom;
 }
 
 /**
