@@ -76,6 +76,8 @@ export function setupInputHandlers(canvas, state) {
    * button: 0=left, 1=middle, 2=right
    */
   canvas.addEventListener('mousedown', (event) => {
+    state.mouse.mouseDownX = state.mouse.x;
+    state.mouse.mouseDownY = state.mouse.y;
     mouseDown(event.button);
   });
 

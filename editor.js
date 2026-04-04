@@ -50,6 +50,9 @@ export const state = {
     // Mouse velocity (delta from previous frame)
     deltaX: 0,
     deltaY: 0,
+    // Position where mouse was last pressed down (for drag calculations)
+    mouseDownX: 0,
+    mouseDownY: 0,
   },
 
   // Camera/viewport
@@ -76,7 +79,7 @@ export const state = {
  * Transition to a new tool, calling lifecycle hooks.
  * ONLY place that lifecycle methods should EVER be called
  */
-function transitionTo(nextTool) {
+function transitionToTool(nextTool) {
   if (state.currentTool === nextTool) return;
   state.currentTool?.onExit(state);
   state.currentTool = nextTool;
@@ -93,7 +96,7 @@ export function setTool(name) {
     return; // Don't change current tool while Alt override is active
   }
   state.selectedToolName = name;
-  transitionTo(tools[name]);
+  transitionToTool(tools[name]);
 }
 
 /**
@@ -103,7 +106,7 @@ export function activateAltOverride() {
   if (state.isAltOverride) return;
   state.previousToolName = state.selectedToolName;
   state.isAltOverride = true;
-  transitionTo(tools.camera);
+  transitionToTool(tools.camera);
 }
 
 /**
@@ -113,7 +116,7 @@ export function deactivateAltOverride() {
   if (!state.isAltOverride) return;
   state.isAltOverride = false;
   state.selectedToolName = state.previousToolName; // Ensure selected tool is correct when returning
-  transitionTo(tools[state.selectedToolName]);
+  transitionToTool(tools[state.selectedToolName]);
 }
 
 /**

@@ -126,20 +126,42 @@ function drawHighlightedTile(ctx, state) {
 function drawDebugMouse(ctx, state) {
   const x = state.mouse.x;
   const y = state.mouse.y;
+  const mdx = state.mouse.mouseDownX;
+  const mdy = state.mouse.mouseDownY;
 
   // Draw small circle at exact mouse position (screen coordinates)
-  ctx.fillStyle = '#ff00ff';
-  ctx.beginPath();
-  ctx.arc(x, y, 4, 0, Math.PI * 2);
-  ctx.fill();
+  drawCircle(ctx, x, y, 5, 'rgba(255, 0, 255, 0.8)');
+  drawCircle(ctx, mdx, mdy, 5, 'rgba(255, 0, 255, 0.4)');
 
   // Draw velocity indicator (small line showing delta)
   if (state.mouse.deltaX !== 0 || state.mouse.deltaY !== 0) {
-    ctx.strokeStyle = '#ffff00';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + state.mouse.deltaX * 2, y + state.mouse.deltaY * 2);
-    ctx.stroke();
+    drawLine(ctx, x, y, x + state.mouse.deltaX * 2, y + state.mouse.deltaY * 2, '#ffff00', 1);
   }
+
+  // If left mouse is down, draw a rectangle from mouse down position to current position
+  if (state.input.isLeftMouseDown) {
+    drawRectLines(ctx, x, y, mdx - x, mdy - y, 'rgba(255, 0, 255, 0.8)', 1);
+  }
+}
+
+function drawCircle(ctx, x, y, radius, color) {
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawLine(ctx, x1, y1, x2, y2, color, width) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+}
+
+function drawRectLines(ctx, x, y, width, height, color, lineWidth) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.strokeRect(x, y, width, height);
 }
