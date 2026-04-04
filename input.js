@@ -3,7 +3,38 @@
  * Handles mouse movement, clicks, keyboard, and UI interactions
  */
 
-import { mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool } from './editor.js';
+import { mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive } from './editor.js';
+
+/**
+ * Update tool button highlighting based on current state
+ */
+function updateToolButtonsUI() {
+  const toolButtons = document.querySelectorAll('.tool-btn');
+  const currentTool = getCurrentTool();
+  const previousTool = getPreviousTool();
+  const altActive = isAltOverrideActive();
+
+  toolButtons.forEach((button) => {
+    const toolName = button.dataset.tool;
+    button.classList.remove('active', 'alt-override', 'previous-tool');
+
+    if (altActive) {
+      // When Alt is held, camera is highlighted in override style
+      if (toolName === 'camera') {
+        button.classList.add('alt-override');
+      }
+      // The tool we're returning to gets a subtle outline
+      if (toolName === previousTool) {
+        button.classList.add('previous-tool');
+      }
+    } else {
+      // Normal mode: just highlight the current tool
+      if (toolName === currentTool) {
+        button.classList.add('active');
+      }
+    }
+  });
+}
 
 export function setupInputHandlers(canvas, state) {
   /**
@@ -80,7 +111,13 @@ export function setupInputHandlers(canvas, state) {
    * Tracks modifier keys like Alt for alt+drag camera panning
    */
   document.addEventListener('keydown', (event) => {
+    const wasAltActive = isAltOverrideActive();
     keyDown(event.key);
+    const isAltActive = isAltOverrideActive();
+    // Update buttons if Alt state changed
+    if (event.key.toLowerCase() === 'alt' && wasAltActive !== isAltActive) {
+      updateToolButtonsUI();
+    }
   });
 
   /**
@@ -88,7 +125,13 @@ export function setupInputHandlers(canvas, state) {
    * Stops tracking modifier keys
    */
   document.addEventListener('keyup', (event) => {
+    const wasAltActive = isAltOverrideActive();
     keyUp(event.key);
+    const isAltActive = isAltOverrideActive();
+    // Update buttons if Alt state changed
+    if (event.key.toLowerCase() === 'alt' && wasAltActive !== isAltActive) {
+      updateToolButtonsUI();
+    }
   });
 
   /**
@@ -99,12 +142,13 @@ export function setupInputHandlers(canvas, state) {
   const toolButtons = document.querySelectorAll('.tool-btn');
   toolButtons.forEach((button) => {
     button.addEventListener('click', (event) => {
-      // Remove active class from all buttons
-      toolButtons.forEach((btn) => btn.classList.remove('active'));
-      // Add active class to clicked button
-      event.target.classList.add('active');
       // Set the active tool
       setTool(event.target.dataset.tool);
+      // Update button UI
+      updateToolButtonsUI();
     });
   });
+
+  // Initialize button highlighting
+  updateToolButtonsUI();
 }

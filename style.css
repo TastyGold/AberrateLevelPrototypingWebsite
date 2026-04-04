@@ -97,17 +97,39 @@ body {
 
 .tool-btn {
   min-width: 100px;
+  transition: all 0.2s ease;
 }
 
-.tool-btn.active {
+#bottomBar .tool-btn.active {
   background-color: #64c8ff;
   color: #101010;
   border-color: #64c8ff;
 }
 
-.tool-btn.active:hover {
+#bottomBar .tool-btn.active:hover {
   background-color: #7dd9ff;
   border-color: #7dd9ff;
+}
+
+/* Alt key override - camera tool highlighted in red while Alt is held */
+#bottomBar .tool-btn.alt-override {
+  background-color: #ff4444;
+  color: #ffffff;
+  border-color: #ff6666;
+}
+
+#bottomBar .tool-btn.alt-override:hover {
+  background-color: #ff5555;
+  border-color: #ff7777;
+}
+
+/* Previous tool outline - shows which tool will be returned to when Alt is released */
+#bottomBar .tool-btn.previous-tool {
+  background-color: transparent;
+  color: #e0e0e0;
+  border: 1px solid #64c8ff;
+  outline: 1px solid #64c8ff;
+  outline-offset: -4px;
 }
 
 /* Canvas Container */

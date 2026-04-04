@@ -36,4 +36,16 @@ export class Tool {
    * @param {string} key - The key that was released
    */
   onKeyUp(state, key) {}
+
+  /**
+   * Called when this tool becomes active
+   * @param {Object} state - The editor state
+   */
+  onEnter(state) {}
+
+  /**
+   * Called when this tool becomes inactive
+   * @param {Object} state - The editor state
+   */
+  onExit(state) {}
 }
