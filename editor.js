@@ -69,43 +69,42 @@ export const state = {
 
 
 /**
- * Set the active tool (permanent selection)
+ * Transition to a new tool, calling lifecycle hooks.
+ * ONLY place that lifecycle methods should EVER be called
+ */
+function transitionTo(nextTool) {
+  if (state.currentTool === nextTool) return;
+  state.currentTool?.onExit(state);
+  state.currentTool = nextTool;
+  state.currentTool?.onEnter(state);
+}
+
+/**
+ * Set the active tool (permanent selection).
  * @param {string} name - Name of the tool to activate
  */
 export function setTool(name) {
-  if (state.currentTool === tools[name]) return;
-
-  state.currentTool?.onExit(state);
-  state.previousTool = tools[state.selectedTool];
   state.selectedTool = name;
-  state.currentTool = tools[name];
-  state.currentTool?.onEnter(state);
   state.isAltOverride = false;
+  transitionTo(tools[name]);
 }
 
 /**
- * Temporarily switch to camera tool (when Alt key is pressed)
+ * Temporarily switch to camera tool (when Alt key is pressed).
  */
 export function activateAltOverride() {
-  if (state.isAltOverride) return; // Already active
-
+  if (state.isAltOverride) return;
   state.isAltOverride = true;
-  state.previousTool = tools[state.selectedTool];
-  state.currentTool?.onExit(state);
-  state.currentTool = tools.camera;
-  state.currentTool?.onEnter(state);
+  transitionTo(tools.camera);
 }
 
 /**
- * Return to the previous tool (when Alt key is released)
+ * Return to the selected tool (when Alt key is released).
  */
 export function deactivateAltOverride() {
-  if (!state.isAltOverride) return; // Not active
-
+  if (!state.isAltOverride) return;
   state.isAltOverride = false;
-  state.currentTool?.onExit(state);
-  state.currentTool = tools[state.selectedTool];
-  state.currentTool?.onEnter(state);
+  transitionTo(tools[state.selectedTool]);
 }
 
 /**
