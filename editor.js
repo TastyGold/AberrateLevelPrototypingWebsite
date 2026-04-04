@@ -21,8 +21,7 @@ export const state = {
   entities: [],
 
   // UI state
-  selectedTool: 'select',
-  selectedTile: null,
+  selectedTool: 'camera',
 
   // Mouse state (in local canvas coordinates)
   mouse: {
@@ -50,29 +49,34 @@ export const state = {
   },
 };
 
+// Import tools
+import { CameraTool } from './CameraTool.js';
+import { RoomTool } from './RoomTool.js';
+
+// Tool instances
+const tools = {
+  camera: new CameraTool(),
+  room: new RoomTool(),
+};
+
+// Current active tool
+let currentTool = tools.camera;
+
+/**
+ * Set the active tool
+ * @param {string} name - Name of the tool to activate
+ */
+export function setTool(name) {
+  state.selectedTool = name;
+  currentTool = tools[name];
+}
+
 /**
  * Handle mouse button press
  * @param {number} button - Mouse button (0=left, 1=middle, 2=right)
- * 
- * TODO: Implement tile placing logic here when selectedTool is 'tile'
- * TODO: Implement entity placing logic when selectedTool is 'entity'
- * TODO: Implement erasing logic when selectedTool is 'erase'
  */
 export function mouseDown(button) {
-  // Handle middle click for camera panning
-  if (button === 1) {
-    state.input.isMiddleMouseDown = true;
-    return;
-  }
-
-  // Handle left click
-  if (button === 0) {
-    state.input.isLeftMouseDown = true;
-    // Check selectedTool and perform action
-    // if (state.selectedTool === 'tile') { ... }
-    // if (state.selectedTool === 'entity') { ... }
-  }
-  // TODO: Handle right click (button === 2)
+  currentTool.onMouseDown(state, button);
 }
 
 /**
@@ -80,17 +84,7 @@ export function mouseDown(button) {
  * @param {number} button - Mouse button (0=left, 1=middle, 2=right)
  */
 export function mouseUp(button) {
-  // Stop camera panning
-  if (button === 1) {
-    state.input.isMiddleMouseDown = false;
-    return;
-  }
-
-  // Handle left click release
-  if (button === 0) {
-    state.input.isLeftMouseDown = false;
-    // TODO: Finalize any editing operations
-  }
+  currentTool.onMouseUp(state, button);
 }
 
 /**
@@ -98,10 +92,7 @@ export function mouseUp(button) {
  * @param {string} key - The key that was pressed
  */
 export function keyDown(key) {
-  console.log("Key down:", key);
-  if (key.toLowerCase() === 'alt') {
-    state.input.isAltDown = true;
-  }
+  currentTool.onKeyDown(state, key);
 }
 
 /**
@@ -109,19 +100,12 @@ export function keyDown(key) {
  * @param {string} key - The key that was released
  */
 export function keyUp(key) {
-  console.log("Key up:", key);
-  if (key.toLowerCase() === 'alt') {
-    state.input.isAltDown = false;
-  }
+  currentTool.onKeyUp(state, key);
 }
 
 // effectively the update function for input - called every time mouse moves
 export function mouseMove(event) {
-    if (state.input.isMiddleMouseDown) {
-      panCamera(-state.mouse.deltaX, -state.mouse.deltaY);
-    } else if (state.input.isAltDown && state.input.isLeftMouseDown) {
-      panCamera(-state.mouse.deltaX, -state.mouse.deltaY);
-    }
+  currentTool.onMouseMove(state);
 }
 
 /**

@@ -3,7 +3,7 @@
  * Handles mouse movement, clicks, keyboard, and UI interactions
  */
 
-import { mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom } from './editor.js';
+import { mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool } from './editor.js';
 
 export function setupInputHandlers(canvas, state) {
   /**
@@ -94,7 +94,7 @@ export function setupInputHandlers(canvas, state) {
   /**
    * TOOL BUTTON SELECTION
    * Handles clicking the tool buttons at the bottom
-   * Updates state.selectedTool based on which button was clicked
+   * Updates the active tool via setTool
    */
   const toolButtons = document.querySelectorAll('.tool-btn');
   toolButtons.forEach((button) => {
@@ -103,8 +103,8 @@ export function setupInputHandlers(canvas, state) {
       toolButtons.forEach((btn) => btn.classList.remove('active'));
       // Add active class to clicked button
       event.target.classList.add('active');
-      // Update selected tool in state
-      state.selectedTool = event.target.dataset.tool;
+      // Set the active tool
+      setTool(event.target.dataset.tool);
     });
   });
 }
