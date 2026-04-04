@@ -3,14 +3,13 @@
  * Handles mouse movement, clicks, keyboard, and UI interactions
  */
 
-import { mouseDown, mouseUp, keyDown, keyUp, panCamera, zoom } from './editor.js';
+import { mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom } from './editor.js';
 
 export function setupInputHandlers(canvas, state) {
   /**
    * MOUSE MOVEMENT
    * Called when mouse moves anywhere on the canvas
    * Updates: mouse position, grid position, and mouse delta (velocity)
-   * Also handles camera panning when middle mouse or alt+left is held
    */
   canvas.addEventListener('mousemove', (event) => {
     const rect = canvas.getBoundingClientRect();
@@ -34,12 +33,8 @@ export function setupInputHandlers(canvas, state) {
     state.mouse.gridX = Math.floor(x / state.gridSize);
     state.mouse.gridY = Math.floor(y / state.gridSize);
 
-    // Handle camera panning with middle mouse or alt+left mouse
-    if (state.input.isMiddleMouseDown) {
-      panCamera(-deltaX, -deltaY);
-    } else if (state.input.isAltDown && state.input.isLeftMouseDown) {
-      panCamera(-deltaX, -deltaY);
-    }
+    // Defer editor actions that depend on mouse movement to editor.js
+    mouseMove(event);
   });
 
   /**

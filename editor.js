@@ -98,6 +98,7 @@ export function mouseUp(button) {
  * @param {string} key - The key that was pressed
  */
 export function keyDown(key) {
+  console.log("Key down:", key);
   if (key.toLowerCase() === 'alt') {
     state.input.isAltDown = true;
   }
@@ -108,9 +109,19 @@ export function keyDown(key) {
  * @param {string} key - The key that was released
  */
 export function keyUp(key) {
+  console.log("Key up:", key);
   if (key.toLowerCase() === 'alt') {
     state.input.isAltDown = false;
   }
+}
+
+// effectively the update function for input - called every time mouse moves
+export function mouseMove(event) {
+    if (state.input.isMiddleMouseDown) {
+      panCamera(-state.mouse.deltaX, -state.mouse.deltaY);
+    } else if (state.input.isAltDown && state.input.isLeftMouseDown) {
+      panCamera(-state.mouse.deltaX, -state.mouse.deltaY);
+    }
 }
 
 /**
@@ -155,4 +166,11 @@ export function setTile(gridX, gridY, tileType) {
   // TODO: Add tile to state.tiles array
   // Could be an array of objects: { x, y, type }
   // Example: state.tiles.push({ x: gridX, y: gridY, type: tileType });
+
+  let foundIndex = state.tiles.findIndex(t => t.x === gridX && t.y === gridY);
+  if (foundIndex !== -1) {
+    state.tiles[foundIndex].type = tileType; // Update existing tile  
+  } else {
+    state.tiles.push({ x: gridX, y: gridY, type: tileType }); // Add new tile
+  }
 }
