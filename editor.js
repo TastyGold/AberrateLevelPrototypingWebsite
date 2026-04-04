@@ -13,6 +13,16 @@ export const config = {
   // Alt key behavior
   altModeKey: 'alt',
   altModeTool: 'camera',
+  // Hotkey settings
+  enableToolHotkeys: false,
+  hotkeys: {
+    tools: {
+      camera: 'q',
+      room: 'w',
+      entity: 'e',
+      erase: 'r',
+    }
+  }
 };
 
 // Import tools

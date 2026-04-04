@@ -18,6 +18,16 @@ function updateToolButtonsUI() {
   toolButtons.forEach((button) => {
     const toolName = button.dataset.tool;
     button.classList.remove('active', 'alt-override', 'previous-tool');
+    if (config.enableToolHotkeys) {
+      // add hotkey hint to button text if enabled in config
+      const hotkey = config.hotkeys.tools[toolName];
+      if (hotkey) {
+        button.innerHTML = `${button.dataset.text} [${hotkey.toUpperCase()}]`;
+      }
+    }
+    else {
+      button.innerHTML = button.dataset.text; // reset to default text if hotkeys are disabled
+    }
 
     if (altActive) {
       // When Alt is held, camera is highlighted in override style
@@ -114,13 +124,9 @@ export function setupInputHandlers(canvas, state) {
    * Tracks modifier keys like Alt for alt+drag camera panning
    */
   document.addEventListener('keydown', (event) => {
-    const wasAltActive = isAltOverrideActive();
     keyDown(event.key);
-    const isAltActive = isAltOverrideActive();
-    // Update buttons if Alt state changed
-    if (event.key.toLowerCase() === 'alt' && wasAltActive !== isAltActive) {
-      updateToolButtonsUI();
-    }
+    // always update tool button ui to account for hotkeys being pressed
+    updateToolButtonsUI();
   });
 
   /**
@@ -154,4 +160,14 @@ export function setupInputHandlers(canvas, state) {
 
   // Initialize button highlighting
   updateToolButtonsUI();
+
+  // Set up hotkey button toggle
+  const hotkeyBtn = document.getElementById('hotkeyBtn');
+  console.log('Hotkey button found:', hotkeyBtn);
+  hotkeyBtn.innerHTML = config.enableToolHotkeys ? hotkeyBtn.dataset.activetext : hotkeyBtn.dataset.inactivetext;
+  hotkeyBtn.addEventListener('click', () => {
+    config.enableToolHotkeys = !config.enableToolHotkeys;
+    hotkeyBtn.innerHTML = config.enableToolHotkeys ? hotkeyBtn.dataset.activetext : hotkeyBtn.dataset.inactivetext;
+    updateToolButtonsUI();
+  });
 }

@@ -13,11 +13,18 @@ function resizeCanvas() {
     canvas.height = container.clientHeight;
 }
 
-resizeCanvas();
+// Listen for window resize to adjust canvas size
 window.addEventListener('resize', resizeCanvas);
 
 // Setup input handlers
 setupInputHandlers(canvas, state);
+
+// on content loaded
+document.addEventListener('DOMContentLoaded', () => {
+    resizeCanvas();
+    // Initial render
+    draw(ctx, state);   
+});
 
 // Main game loop
 function loop() {

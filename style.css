@@ -139,7 +139,7 @@ body {
   justify-content: center;
   align-items: center;
   background-color: #0f0f0f;
-  overflow: hidden;
+  overflow:hidden;
 }
 
 canvas#editor {
