@@ -4,6 +4,10 @@ import { Tool } from './Tool.js';
  * Room tool for placing and editing rooms/tiles
  */
 export class RoomTool extends Tool {
+    getName() {
+        return 'room';
+    }
+
   onEnter(state) {
     console.log('Room tool activated');
   }

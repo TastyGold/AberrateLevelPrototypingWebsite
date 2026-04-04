@@ -10,6 +10,9 @@ export const config = {
   // Min and max zoom levels
   minZoom: 0.3,
   maxZoom: 5,
+  // Alt key behavior
+  altModeKey: 'alt',
+  altModeTool: 'camera',
 };
 
 // Import tools
@@ -22,6 +25,8 @@ const tools = {
   camera: new CameraTool(),
   room: new RoomTool(),
   universal: new UniversalTool(),
+  entity: null, // Placeholder for future EntityTool
+  erase: null, // Placeholder for future EraseTool
 };
 
 export const state = {
@@ -33,7 +38,8 @@ export const state = {
   entities: [],
 
   // UI state
-  selectedTool: 'camera',
+  selectedToolName: 'camera',
+  previousToolName: 'camera',
 
   // Mouse state (in local canvas coordinates)
   mouse: {
@@ -62,8 +68,6 @@ export const state = {
 
   // Current active tool
   currentTool: tools.camera,
-  // Previous tool (for Alt key temporary override)
-  previousTool: tools.camera,
   isAltOverride: false,
 };
 
@@ -84,8 +88,11 @@ function transitionTo(nextTool) {
  * @param {string} name - Name of the tool to activate
  */
 export function setTool(name) {
-  state.selectedTool = name;
-  state.isAltOverride = false;
+  if (state.isAltOverride) {
+    state.previousToolName = name; // Update previous tool if Alt is currently overriding
+    return; // Don't change current tool while Alt override is active
+  }
+  state.selectedToolName = name;
   transitionTo(tools[name]);
 }
 
@@ -94,6 +101,7 @@ export function setTool(name) {
  */
 export function activateAltOverride() {
   if (state.isAltOverride) return;
+  state.previousToolName = state.selectedToolName;
   state.isAltOverride = true;
   transitionTo(tools.camera);
 }
@@ -104,21 +112,22 @@ export function activateAltOverride() {
 export function deactivateAltOverride() {
   if (!state.isAltOverride) return;
   state.isAltOverride = false;
-  transitionTo(tools[state.selectedTool]);
+  state.selectedToolName = state.previousToolName; // Ensure selected tool is correct when returning
+  transitionTo(tools[state.selectedToolName]);
 }
 
 /**
  * Get the current tool name
  */
 export function getCurrentTool() {
-  return state.selectedTool;
+  return state.selectedToolName;
 }
 
 /**
  * Get the previous tool name (for when Alt is overriding)
  */
 export function getPreviousTool() {
-  return Object.keys(tools).find(name => tools[name] === state.previousTool);
+  return state.previousToolName;
 }
 
 /**

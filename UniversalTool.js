@@ -1,10 +1,14 @@
 import { Tool } from './Tool.js';
-import { panCamera, activateAltOverride, deactivateAltOverride } from './editor.js';
+import { config, panCamera, activateAltOverride, deactivateAltOverride } from './editor.js';
 
 /**
  * Universal tool for handling various editor actions
  */
 export class UniversalTool extends Tool {
+    getName() {
+        return 'universal';
+    }
+
     onEnter(state) {
         // universal tool doesn't need lifecycle methods
     }
@@ -38,7 +42,7 @@ export class UniversalTool extends Tool {
     }
 
     onKeyDown(state, key) {
-        if (key.toLowerCase() === 'alt') {
+        if (key.toLowerCase() === config.altModeKey) {
         state.input.isAltDown = true;
         // Handle Alt key specially for temporary camera override
         if (!state.isAltOverride && state.selectedTool !== 'camera') {
@@ -48,7 +52,7 @@ export class UniversalTool extends Tool {
     }
 
     onKeyUp(state, key) {
-        if (key.toLowerCase() === 'alt') {
+        if (key.toLowerCase() === config.altModeKey) {
             state.input.isAltDown = false;
             // Handle Alt key release to return to previous tool
             if (state.isAltOverride) {

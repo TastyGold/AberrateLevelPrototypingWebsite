@@ -48,4 +48,10 @@ export class Tool {
    * @param {Object} state - The editor state
    */
   onExit(state) {}
+
+  /**
+   * Get the name of this tool (for debugging/UI purposes)
+   * @return {string} The name of the tool
+   */
+  getName() {}
 }

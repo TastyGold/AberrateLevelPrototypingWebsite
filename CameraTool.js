@@ -5,6 +5,10 @@ import { panCamera } from './editor.js';
  * Camera tool for panning and zooming the view
  */
 export class CameraTool extends Tool {
+  getName() {
+    return 'camera';
+  }
+
   onEnter(state) {
     console.log('Camera tool activated');
   }

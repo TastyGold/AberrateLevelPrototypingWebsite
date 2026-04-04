@@ -3,7 +3,7 @@
  * Handles mouse movement, clicks, keyboard, and UI interactions
  */
 
-import { mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive } from './editor.js';
+import { config, mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive } from './editor.js';
 
 /**
  * Update tool button highlighting based on current state
@@ -13,6 +13,7 @@ function updateToolButtonsUI() {
   const currentTool = getCurrentTool();
   const previousTool = getPreviousTool();
   const altActive = isAltOverrideActive();
+  console.log('Updating tool buttons UI:', { currentTool, previousTool, altActive });
 
   toolButtons.forEach((button) => {
     const toolName = button.dataset.tool;
@@ -20,7 +21,7 @@ function updateToolButtonsUI() {
 
     if (altActive) {
       // When Alt is held, camera is highlighted in override style
-      if (toolName === 'camera') {
+      if (toolName === config.altModeTool) {
         button.classList.add('alt-override');
       }
       // The tool we're returning to gets a subtle outline
