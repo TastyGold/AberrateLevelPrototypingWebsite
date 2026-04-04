@@ -17,7 +17,7 @@ export class CameraTool extends Tool {
   }
 
   onMouseMove(state) {
-    if (state.input.isMiddleMouseDown || (state.input.isAltDown && state.input.isLeftMouseDown)) {
+    if (state.input.isLeftMouseDown) {
       panCamera(-state.mouse.deltaX, -state.mouse.deltaY);
     }
   }

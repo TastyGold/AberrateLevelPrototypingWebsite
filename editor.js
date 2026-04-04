@@ -12,6 +12,18 @@ export const config = {
   maxZoom: 5,
 };
 
+// Import tools
+import { CameraTool } from './CameraTool.js';
+import { RoomTool } from './RoomTool.js';
+import { UniversalTool } from './UniversalTool.js';
+
+// Tool instances
+const tools = {
+  camera: new CameraTool(),
+  room: new RoomTool(),
+  universal: new UniversalTool(),
+};
+
 export const state = {
   // Grid properties
   gridSize: 40,
@@ -47,62 +59,53 @@ export const state = {
     isAltDown: false,
     isLeftMouseDown: false,
   },
+
+  // Current active tool
+  currentTool: tools.camera,
+  // Previous tool (for Alt key temporary override)
+  previousTool: tools.camera,
+  isAltOverride: false,
 };
 
-// Import tools
-import { CameraTool } from './CameraTool.js';
-import { RoomTool } from './RoomTool.js';
-
-// Tool instances
-const tools = {
-  camera: new CameraTool(),
-  room: new RoomTool(),
-};
-
-// Current active tool
-let currentTool = tools.camera;
-// Previous tool (for Alt key temporary override)
-let previousTool = tools.camera;
-let isAltOverride = false;
 
 /**
  * Set the active tool (permanent selection)
  * @param {string} name - Name of the tool to activate
  */
 export function setTool(name) {
-  if (currentTool === tools[name]) return;
+  if (state.currentTool === tools[name]) return;
 
-  currentTool?.onExit(state);
-  previousTool = tools[state.selectedTool];
+  state.currentTool?.onExit(state);
+  state.previousTool = tools[state.selectedTool];
   state.selectedTool = name;
-  currentTool = tools[name];
-  currentTool?.onEnter(state);
-  isAltOverride = false;
+  state.currentTool = tools[name];
+  state.currentTool?.onEnter(state);
+  state.isAltOverride = false;
 }
 
 /**
  * Temporarily switch to camera tool (when Alt key is pressed)
  */
 export function activateAltOverride() {
-  if (isAltOverride) return; // Already active
+  if (state.isAltOverride) return; // Already active
 
-  isAltOverride = true;
-  previousTool = tools[state.selectedTool];
-  currentTool?.onExit(state);
-  currentTool = tools.camera;
-  currentTool?.onEnter(state);
+  state.isAltOverride = true;
+  state.previousTool = tools[state.selectedTool];
+  state.currentTool?.onExit(state);
+  state.currentTool = tools.camera;
+  state.currentTool?.onEnter(state);
 }
 
 /**
  * Return to the previous tool (when Alt key is released)
  */
 export function deactivateAltOverride() {
-  if (!isAltOverride) return; // Not active
+  if (!state.isAltOverride) return; // Not active
 
-  isAltOverride = false;
-  currentTool?.onExit(state);
-  currentTool = tools[state.selectedTool];
-  currentTool?.onEnter(state);
+  state.isAltOverride = false;
+  state.currentTool?.onExit(state);
+  state.currentTool = tools[state.selectedTool];
+  state.currentTool?.onEnter(state);
 }
 
 /**
@@ -116,14 +119,14 @@ export function getCurrentTool() {
  * Get the previous tool name (for when Alt is overriding)
  */
 export function getPreviousTool() {
-  return Object.keys(tools).find(name => tools[name] === previousTool);
+  return Object.keys(tools).find(name => tools[name] === state.previousTool);
 }
 
 /**
  * Check if Alt override is active
  */
 export function isAltOverrideActive() {
-  return isAltOverride;
+  return state.isAltOverride;
 }
 
 /**
@@ -131,13 +134,8 @@ export function isAltOverrideActive() {
  * @param {number} button - Mouse button (0=left, 1=middle, 2=right)
  */
 export function mouseDown(button) {
-  if (button === 1) {
-    state.input.isMiddleMouseDown = true;
-  }
-  if (button === 0) {
-    state.input.isLeftMouseDown = true;
-  }
-  currentTool?.onMouseDown(state, button);
+  tools.universal.onMouseDown(state, button); // Universal tool handles input state
+  state.currentTool?.onMouseDown(state, button);
 }
 
 /**
@@ -145,13 +143,8 @@ export function mouseDown(button) {
  * @param {number} button - Mouse button (0=left, 1=middle, 2=right)
  */
 export function mouseUp(button) {
-  if (button === 1) {
-    state.input.isMiddleMouseDown = false;
-  }
-  if (button === 0) {
-    state.input.isLeftMouseDown = false;
-  }
-  currentTool?.onMouseUp(state, button);
+  tools.universal.onMouseUp(state, button); // Universal tool handles input state
+  state.currentTool?.onMouseUp(state, button);
 }
 
 /**
@@ -159,14 +152,8 @@ export function mouseUp(button) {
  * @param {string} key - The key that was pressed
  */
 export function keyDown(key) {
-  if (key.toLowerCase() === 'alt') {
-    state.input.isAltDown = true;
-    // Handle Alt key specially for temporary camera override
-    if (!isAltOverride && state.selectedTool !== 'camera') {
-      activateAltOverride();
-    }
-  }
-  currentTool?.onKeyDown(state, key);
+  tools.universal.onKeyDown(state, key); // Universal tool handles input state
+  state.currentTool?.onKeyDown(state, key);
 }
 
 /**
@@ -174,19 +161,14 @@ export function keyDown(key) {
  * @param {string} key - The key that was released
  */
 export function keyUp(key) {
-  if (key.toLowerCase() === 'alt') {
-    state.input.isAltDown = false;
-    // Handle Alt key release to return to previous tool
-    if (isAltOverride) {
-      deactivateAltOverride();
-    }
-  }
-  currentTool?.onKeyUp(state, key);
+  tools.universal.onKeyUp(state, key); // Universal tool handles input state
+  state.currentTool?.onKeyUp(state, key);
 }
 
 // effectively the update function for input - called every time mouse moves
 export function mouseMove(event) {
-  currentTool?.onMouseMove(state);
+  tools.universal.onMouseMove(state); // Universal tool handles input state
+  state.currentTool?.onMouseMove(state);
 }
 
 /**
