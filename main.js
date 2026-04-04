@@ -24,6 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
     resizeCanvas();
     // Initial render
     draw(ctx, state);   
+    canvas.oncontextmenu = function (e) { 
+        console.log('Right click detected, preventing context menu');
+        e.preventDefault();
+        e.stopPropagation();
+        return false; 
+    };
 });
 
 // Main game loop

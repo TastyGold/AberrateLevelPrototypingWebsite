@@ -63,6 +63,8 @@ export const state = {
     // Position where mouse was last pressed down (for drag calculations)
     mouseDownX: 0,
     mouseDownY: 0,
+    mouseDownGridX: 0,
+    mouseDownGridY: 0,
   },
 
   // Camera/viewport
@@ -82,6 +84,9 @@ export const state = {
   // Current active tool
   currentTool: tools.camera,
   isAltOverride: false,
+
+  // Room Tool
+  creatingRoom: false,
 };
 
 
@@ -198,8 +203,26 @@ export function keyUp(key) {
  * @param {number} deltaY - Amount to move camera in Y (screen pixels)
  */
 export function panCamera(deltaX, deltaY) {
-  state.camera.x += deltaX * config.panSpeed;
-  state.camera.y += deltaY * config.panSpeed;
+  // Convert screen pixel movement to world units by dividing by zoom
+  // When zoomed in (zoom > 1), camera moves slower (more precise)
+  // When zoomed out (zoom < 1), camera moves faster (covers more ground)
+  state.camera.x += (deltaX * config.panSpeed) / state.camera.zoom;
+  state.camera.y += (deltaY * config.panSpeed) / state.camera.zoom;
+}
+
+/**
+ * Convert screen coordinates to world coordinates
+ * @param {number} screenX - Screen X coordinate
+ * @param {number} screenY - Screen Y coordinate
+ * @param {number} canvasWidth - Width of canvas
+ * @param {number} canvasHeight - Height of canvas
+ * @returns {Object} World coordinates {x, y}
+ */
+export function screenToWorld(screenX, screenY, canvasWidth, canvasHeight) {
+  return {
+    x: (screenX - canvasWidth / 2) / state.camera.zoom + state.camera.x,
+    y: (screenY - canvasHeight / 2) / state.camera.zoom + state.camera.y
+  };
 }
 
 /**
@@ -212,16 +235,15 @@ export function panCamera(deltaX, deltaY) {
  */
 export function zoom(zoomDelta, screenX, screenY, canvasWidth, canvasHeight) {
   // Convert screen position to world position BEFORE zoom
-  const worldX = (screenX - canvasWidth / 2) / state.camera.zoom + state.camera.x;
-  const worldY = (screenY - canvasHeight / 2) / state.camera.zoom + state.camera.y;
+  const worldPos = screenToWorld(screenX, screenY, canvasWidth, canvasHeight);
 
   // Update zoom level
   const newZoom = state.camera.zoom * (1 + zoomDelta * config.zoomSpeed);
   state.camera.zoom = Math.max(config.minZoom, Math.min(config.maxZoom, newZoom));
 
   // Adjust camera position to keep world point under cursor
-  state.camera.x = worldX - (screenX - canvasWidth / 2) / state.camera.zoom;
-  state.camera.y = worldY - (screenY - canvasHeight / 2) / state.camera.zoom;
+  state.camera.x = worldPos.x - (screenX - canvasWidth / 2) / state.camera.zoom;
+  state.camera.y = worldPos.y - (screenY - canvasHeight / 2) / state.camera.zoom;
 }
 
 /**

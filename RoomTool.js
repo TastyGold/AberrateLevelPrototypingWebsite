@@ -10,14 +10,18 @@ export class RoomTool extends Tool {
 
   onEnter(state) {
     console.log('Room tool activated');
+    state.creatingRoom = false;
   }
 
   onExit(state) {
     console.log('Room tool deactivated');
+    state.creatingRoom = false;
   }
 
   onMouseDown(state, button) {
     // TODO: Implement room/tile placing logic
+    state.creatingRoom = true;
+    console.log('Started creating room at grid position:', state.mouse.mouseDownGridX, state.mouse.mouseDownGridY);
   }
 
   onMouseMove(state) {
@@ -26,6 +30,7 @@ export class RoomTool extends Tool {
 
   onMouseUp(state, button) {
     // TODO: Implement room/tile finalization logic
+    state.creatingRoom = false;
   }
 
   onKeyDown(state, key) {

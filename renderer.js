@@ -1,3 +1,5 @@
+import { screenToWorld } from './editor.js';
+
 export function draw(ctx, state) {
   // Clear canvas
   ctx.fillStyle = '#1a1a1a';
@@ -12,8 +14,14 @@ export function draw(ctx, state) {
   // Draw grid (in world coordinates)
   drawGrid(ctx, state);
 
-  // Draw highlighted tile (in world coordinates)
-  drawHighlightedTile(ctx, state);
+  if (state.creatingRoom) {
+    // Draw room creation preview (if applicable)
+    drawRoomTool(ctx, state);
+  }
+  else {
+    // Draw highlighted tile (in world coordinates)
+    drawHighlightedTile(ctx, state);
+  }
 
   // Restore canvas state for screen-space UI elements
   ctx.restore();
@@ -41,24 +49,6 @@ function applyCamera(ctx, state) {
 
   // Translate by negative camera position (camera position is world center)
   ctx.translate(-state.camera.x, -state.camera.y);
-}
-
-/**
- * Convert screen coordinates to world coordinates using camera
- * @returns {object} World position {x, y}
- */
-function screenToWorld(screenX, screenY, state, canvasWidth, canvasHeight) {
-  const zoom = state.camera.zoom;
-
-  // Convert screen to relative-to-center
-  const relX = screenX - canvasWidth / 2;
-  const relY = screenY - canvasHeight / 2;
-
-  // Convert to world coordinates
-  const worldX = relX / zoom + state.camera.x;
-  const worldY = relY / zoom + state.camera.y;
-
-  return { x: worldX, y: worldY };
 }
 
 function drawGrid(ctx, state) {
@@ -104,7 +94,7 @@ function drawHighlightedTile(ctx, state) {
   const canvasHeight = ctx.canvas.height;
 
   // Get world position of mouse cursor
-  const worldMouse = screenToWorld(state.mouse.x, state.mouse.y, state, canvasWidth, canvasHeight);
+  const worldMouse = screenToWorld(state.mouse.x, state.mouse.y, canvasWidth, canvasHeight);
   const tileX = Math.floor(worldMouse.x / gridSize) * gridSize;
   const tileY = Math.floor(worldMouse.y / gridSize) * gridSize;
 
@@ -116,6 +106,31 @@ function drawHighlightedTile(ctx, state) {
   ctx.strokeStyle = '#64c8ff';
   ctx.lineWidth = 2 / state.camera.zoom;
   ctx.strokeRect(tileX, tileY, gridSize, gridSize);
+}
+
+function drawRoomTool(ctx, state) {
+  const { gridSize, mouse, camera } = state;
+
+  // Get world position of mouse down and current mouse grid positions
+  const ax = mouse.mouseDownGridX * gridSize;
+  const ay = mouse.mouseDownGridY * gridSize;
+  const bx = mouse.gridX * gridSize;
+  const by = mouse.gridY * gridSize;
+
+  // Calculate top-left corner and size of the rectangle defined by (ax, ay) and (bx, by)
+  const x = Math.min(ax, bx);
+  const y = Math.min(ay, by);
+  const w = Math.abs(bx - ax) + gridSize;
+  const h = Math.abs(by - ay) + gridSize;
+
+  // Room preview fill
+  ctx.fillStyle = 'rgba(100, 255, 159, 0.3)';
+  ctx.fillRect(x, y, w, h);
+
+  // Room border
+  ctx.strokeStyle = '#64ff98';
+  ctx.lineWidth = 2 / camera.zoom;
+  ctx.strokeRect(x, y, w, h);
 }
 
 /**
@@ -140,7 +155,13 @@ function drawDebugMouse(ctx, state) {
 
   // If left mouse is down, draw a rectangle from mouse down position to current position
   if (state.input.isLeftMouseDown) {
-    drawRectLines(ctx, x, y, mdx - x, mdy - y, 'rgba(255, 0, 255, 0.8)', 1);
+    if (state.selectedToolName === 'room') {
+      drawRectLines(ctx, x, y, mdx - x, mdy - y, 'rgba(255, 0, 255, 0.8)', 1);
+    }
+    else if (state.selectedToolName === 'camera') {
+      // Draw camera-specific debug visuals
+      drawLine(ctx, x, y, mdx, mdy, 'rgba(255, 0, 255, 0.8)', 1);
+    }
   }
 }
 

@@ -3,7 +3,7 @@
  * Handles mouse movement, clicks, keyboard, and UI interactions
  */
 
-import { config, mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive } from './editor.js';
+import { config, mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive, screenToWorld } from './editor.js';
 
 /**
  * Update tool button highlighting based on current state
@@ -70,10 +70,14 @@ export function setupInputHandlers(canvas, state) {
     state.mouse.deltaX = deltaX;
     state.mouse.deltaY = deltaY;
 
-    // Calculate which grid tile the mouse is over (before applying zoom)
-    // TODO: Convert screen position to world position using camera for accurate grid detection
-    state.mouse.gridX = Math.floor(x / state.gridSize);
-    state.mouse.gridY = Math.floor(y / state.gridSize);
+    // Convert screen position to world position using camera for accurate grid detection
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    const worldPos = screenToWorld(x, y, canvasWidth, canvasHeight);
+
+    // Calculate which grid tile the mouse is over in world coordinates
+    state.mouse.gridX = Math.floor(worldPos.x / state.gridSize);
+    state.mouse.gridY = Math.floor(worldPos.y / state.gridSize);
 
     // Defer editor actions that depend on mouse movement to editor.js
     mouseMove(event);
@@ -88,6 +92,10 @@ export function setupInputHandlers(canvas, state) {
   canvas.addEventListener('mousedown', (event) => {
     state.mouse.mouseDownX = state.mouse.x;
     state.mouse.mouseDownY = state.mouse.y;
+    console.log('Mouse down at', state.mouse.mouseDownX, state.mouse.mouseDownY, 'grid', state.mouse.gridX, state.mouse.gridY);
+    state.mouse.mouseDownGridX = state.mouse.gridX;
+    state.mouse.mouseDownGridY = state.mouse.gridY;
+    console.log('grid positions:', state.mouse.mouseDownGridX, state.mouse.mouseDownGridY);
     mouseDown(event.button);
   });
 
