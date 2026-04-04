@@ -146,6 +146,12 @@ export function mouseDown(button) {
   state.currentTool?.onMouseDown(state, button);
 }
 
+// effectively the update function for input - called every time mouse moves
+export function mouseMove(event) {
+  tools.universal.onMouseMove(state); // Universal tool handles input state
+  state.currentTool?.onMouseMove(state);
+}
+
 /**
  * Handle mouse button release
  * @param {number} button - Mouse button (0=left, 1=middle, 2=right)
@@ -171,12 +177,6 @@ export function keyDown(key) {
 export function keyUp(key) {
   tools.universal.onKeyUp(state, key); // Universal tool handles input state
   state.currentTool?.onKeyUp(state, key);
-}
-
-// effectively the update function for input - called every time mouse moves
-export function mouseMove(event) {
-  tools.universal.onMouseMove(state); // Universal tool handles input state
-  state.currentTool?.onMouseMove(state);
 }
 
 /**
