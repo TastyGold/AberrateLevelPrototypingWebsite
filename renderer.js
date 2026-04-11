@@ -28,6 +28,9 @@ export function draw(ctx, state) {
     drawRectLines(ctx, state.entityPreview.x, state.entityPreview.y, state.gridSize, state.gridSize, 'rgba(255, 255, 0, 0.5)', 2);
   }
 
+  // Draw entities
+  drawEntites(ctx, state);
+
   // Restore canvas state for screen-space UI elements
   ctx.restore();
 
@@ -136,6 +139,30 @@ function drawRoomTool(ctx, state) {
   ctx.strokeStyle = '#64ff98';
   ctx.lineWidth = 2 / camera.zoom;
   ctx.strokeRect(x, y, w, h);
+}
+
+function drawEntites(ctx, state) {
+  state.entities.forEach(entity => {
+    // For now, just draw a simple rectangle for each entity type
+    // color switch based on entity type
+    switch (entity.type) {
+      case 'box':
+        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+        break;
+      case 'button':
+        ctx.fillStyle = 'rgba(255, 50, 50, 1)';
+        break;
+      case 'stairs':
+        ctx.fillStyle = 'rgba(55, 0, 255, 1)';
+        break;
+      default:
+        ctx.fillStyle = 'rgba(255, 0, 255, 1)';
+        break;
+    }
+    const g = state.gridSize;
+    const g2 = g / 2;
+    ctx.fillRect(entity.x - g2, entity.y - g2, g, g);
+  });
 }
 
 /**

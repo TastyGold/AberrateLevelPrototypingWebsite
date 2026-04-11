@@ -35,7 +35,13 @@ export class EntityTool extends Tool {
       // Place the selected entity at mouse position
       // For now, just log or something
       console.log('Placing entity:', state.selectedEntityType, 'at', state.mouse.gridX, state.mouse.gridY);
+      state.entities.push({ // add entity to list
+        type: state.selectedEntityType,
+        x: state.mouse.worldX,
+        y: state.mouse.worldY,
+      });
     }
+    console.log(state.entities);
   }
 
   onMouseMove(state) {

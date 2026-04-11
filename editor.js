@@ -73,15 +73,6 @@ export const state = {
   selectedToolName: 'camera',
   previousToolName: 'camera',
 
-  // Selected entity type for entity tool
-  selectedEntityType: 'box', // Default
-  placingEntity: false, // Whether we're currently placing an entity (for click-and-drag)
-  entityPreview: {
-    x: 0,
-    y: 0,
-    visible: false,
-  },
-
   // Mouse state (in local canvas coordinates)
   mouse: {
     canvasX: 0,
@@ -122,6 +113,16 @@ export const state = {
 
   // Room Tool
   creatingRoom: false,
+  
+  // Entity Tool
+  selectedEntityType: 'box', // Default
+  placingEntity: false, // Whether we're currently placing an entity (for click-and-drag)
+  entityPreview: {
+    x: 0,
+    y: 0,
+    visible: false,
+  },
+  entities: [], // List of placed entities in the level
 };
 
 
