@@ -175,15 +175,15 @@ export function setupInputHandlers(canvas, state) {
   document.addEventListener('keydown', (event) => {
     if (event.repeat) return; // don't allow repeat key pressed for held key
     const lastTool = state.currentTool;
+    const lastEntity = state.selectedEntityType;
     keyDown(event.key);
-    if (event.key <= '9' && event.key >= '1') {
-      onEntityHotkeyPressed(event.key);
-      setTool('entity'); // switch to entity tool when entity hotkey is pressed
-      updateEntityButtonsUI(state);
-    }
     const newTool = state.currentTool;
+    const newEntity = state.selectedEntityType;
     if (lastTool !== newTool) {
       updateToolButtonsUI();
+    }
+    if (lastEntity !== newEntity) {
+      updateEntityButtonsUI(state);
     }
   });
 

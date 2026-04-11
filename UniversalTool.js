@@ -56,6 +56,8 @@ export class UniversalTool extends Tool {
 				return; // stop checking other hotkeys after a match is found;
 			}
 		}
+		// handle entity hotkeys, update selected entity type and switch to entity tool
+		onEntityHotkeyPressed(key);
 	}
 
 	onKeyUp(state, key) {
@@ -67,4 +69,4 @@ export class UniversalTool extends Tool {
 			}
 		}
 	}
-}
+}3

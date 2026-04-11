@@ -191,14 +191,15 @@ export function isAltOverrideActive() {
 }
 
 export function onEntityHotkeyPressed(key) {
-      if (key <= '9' && key >= '1') {
-      // Map number keys to entity types (assuming we have 9 types max)
-      const entityKeys = Object.keys(entityTypes).filter(k => entityTypes[k]?.name);
-      const index = parseInt(key) - 1;
-      if (index >= 0 && index < entityKeys.length  && entityTypes[entityKeys[index]]) {
-        state.selectedEntityType = entityKeys[index];
-      }
+  if (key <= '9' && key >= '1') {
+    // Map number keys to entity types (assuming we have 9 types max)
+    const entityKeys = Object.keys(entityTypes).filter(k => entityTypes[k]?.name);
+    const index = parseInt(key) - 1;
+    if (index >= 0 && index < entityKeys.length  && entityTypes[entityKeys[index]]) {
+      state.selectedEntityType = entityKeys[index];
     }
+    setTool('entity'); // switch to entity tool when entity hotkey is pressed1
+  }
 }
 
 /**
