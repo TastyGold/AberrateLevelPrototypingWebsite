@@ -32,6 +32,9 @@ import { RoomTool } from './RoomTool.js';
 import { UniversalTool } from './UniversalTool.js';
 import { EntityTool } from './EntityTool.js';
 
+// Import entity types
+import { Box } from './Entity.js';
+
 // Tool instances
 const tools = {
   universal: new UniversalTool(),
@@ -40,6 +43,11 @@ const tools = {
   entity: new EntityTool(), // Placeholder for future EntityTool
   room: new RoomTool(),
   erase: null, // Placeholder for future EraseTool
+};
+
+// Entity types available in the editor
+export const entityTypes = {
+  box: Box,
 };
 
 export const state = {
@@ -55,7 +63,7 @@ export const state = {
   previousToolName: 'camera',
 
   // Selected entity type for entity tool
-  selectedEntityType: 'player', // Default
+  selectedEntityType: 'box', // Default
 
   // Mouse state (in local canvas coordinates)
   mouse: {

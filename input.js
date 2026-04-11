@@ -3,7 +3,28 @@
  * Handles mouse movement, clicks, keyboard, and UI interactions
  */
 
-import { config, mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive, screenToWorld } from './editor.js';
+import { config, mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive, screenToWorld, entityTypes } from './editor.js';
+
+/**
+ * Generate entity buttons dynamically from entityTypes
+ */
+function generateEntityButtons() {
+  const palette = document.getElementById('entityPalette');
+  if (!palette) return;
+
+  // Clear existing buttons
+  palette.innerHTML = '';
+
+  // Create a button for each entity type
+  Object.entries(entityTypes).forEach(([typeKey, EntityClass]) => {
+    const instance = new EntityClass();
+    const button = document.createElement('button');
+    button.className = 'entity-btn';
+    button.dataset.entity = instance.getName();
+    button.textContent = instance.getDisplayName();
+    palette.appendChild(button);
+  });
+}
 
 /**
  * Update entity button highlighting based on selected entity type
@@ -182,6 +203,9 @@ export function setupInputHandlers(canvas, state) {
 
   // Initialize button highlighting
   updateToolButtonsUI();
+
+  // Generate entity buttons dynamically
+  generateEntityButtons();
 
   /**
    * ENTITY BUTTON SELECTION
