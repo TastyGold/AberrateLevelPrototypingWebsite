@@ -11,7 +11,7 @@ export const config = {
   minZoom: 0.3,
   maxZoom: 5,
   // Alt key behavior
-  altModeKey: 'alt',
+  altModeKey: ' ',
   altModeTool: 'camera',
   // Hotkey settings
   enableToolHotkeys: false,

@@ -132,6 +132,7 @@ export function setupInputHandlers(canvas, state) {
    * Tracks modifier keys like Alt for alt+drag camera panning
    */
   document.addEventListener('keydown', (event) => {
+    if (event.repeat) return; // don't allow repeat key pressed for held key
     keyDown(event.key);
     // always update tool button ui to account for hotkeys being pressed
     updateToolButtonsUI();
@@ -146,7 +147,7 @@ export function setupInputHandlers(canvas, state) {
     keyUp(event.key);
     const isAltActive = isAltOverrideActive();
     // Update buttons if Alt state changed
-    if (event.key.toLowerCase() === 'alt' && wasAltActive !== isAltActive) {
+    if (event.key.toLowerCase() === config.altModeKey && wasAltActive !== isAltActive) {
       updateToolButtonsUI();
     }
   });
