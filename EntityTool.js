@@ -2,10 +2,11 @@ import { Tool } from './Tool.js';
 
 export class EntityTool extends Tool {
   onEnter(state) {
-    // Show the entity palette
+    // Show the entity palette with animation
     const palette = document.getElementById('entityPalette');
     if (palette) {
-      palette.style.display = 'flex';
+      palette.classList.add('visible');
+      palette.classList.remove('hidden');
       // Update button highlighting
       const entityButtons = document.querySelectorAll('.entity-btn');
       entityButtons.forEach((button) => {
@@ -18,10 +19,11 @@ export class EntityTool extends Tool {
   }
 
   onExit(state) {
-    // Hide the entity palette
+    // Hide the entity palette with animation
     const palette = document.getElementById('entityPalette');
     if (palette) {
-      palette.style.display = 'none';
+      palette.classList.add('hidden');
+      palette.classList.remove('visible');
     }
   }
 

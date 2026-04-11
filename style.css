@@ -88,6 +88,7 @@ body {
   border-bottom: none;
   display: flex;
   justify-content: center;
+  z-index:1000;
 }
 
 #bottomBar .bar-content {
@@ -143,13 +144,12 @@ body {
 }
 
 #entityPalette {
-  display: none;
   position: absolute;
   bottom: 46px;
   left: 0px;
   z-index: 10;
   margin: 16px;
-  padding-bottom:6px;
+  padding-bottom: 6px;
   flex-direction: row;
   gap: 12px;
   overflow-x: auto;
@@ -157,6 +157,23 @@ body {
   max-width: calc(100% - 32px);
   flex-wrap: nowrap;
   scrollbar-color: #444 transparent;
+  display: flex;
+  opacity: 0;
+  transform: translateY(24px);
+  pointer-events: none;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+#entityPalette.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+#entityPalette.hidden {
+  opacity: 0;
+  transform: translateY(24px);
+  pointer-events: none;
 }
 
 #entityPalette::-webkit-scrollbar {
