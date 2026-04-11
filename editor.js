@@ -18,9 +18,10 @@ export const config = {
   hotkeys: {
     tools: {
       camera: 'q',
-      room: 'w',
+      select: 'w',
       entity: 'e',
-      erase: 'r',
+      room: 'r',
+      erase: 't',
     }
   }
 };
@@ -29,13 +30,15 @@ export const config = {
 import { CameraTool } from './CameraTool.js';
 import { RoomTool } from './RoomTool.js';
 import { UniversalTool } from './UniversalTool.js';
+import { EntityTool } from './EntityTool.js';
 
 // Tool instances
 const tools = {
-  camera: new CameraTool(),
-  room: new RoomTool(),
   universal: new UniversalTool(),
-  entity: null, // Placeholder for future EntityTool
+  camera: new CameraTool(),
+  select: null,
+  entity: new EntityTool(), // Placeholder for future EntityTool
+  room: new RoomTool(),
   erase: null, // Placeholder for future EraseTool
 };
 
@@ -50,6 +53,9 @@ export const state = {
   // UI state
   selectedToolName: 'camera',
   previousToolName: 'camera',
+
+  // Selected entity type for entity tool
+  selectedEntityType: 'player', // Default
 
   // Mouse state (in local canvas coordinates)
   mouse: {

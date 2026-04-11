@@ -142,10 +142,61 @@ body {
   overflow:hidden;
 }
 
-canvas#editor {
-  display: block;
-  background-color: #1a1a1a;
-  border: 2px solid #333;
-  max-width: 100%;
-  max-height: 100%;
+#entityPalette {
+  display: none;
+  position: absolute;
+  bottom: 56px;
+  left: 0px;
+  z-index: 10;
+  margin:16px;
+  flex-direction: row;
+  gap: 12px;
+  overflow-x: auto;
+  max-width: calc(100% - 20px);
+  flex-wrap: nowrap;
+}
+
+#entityPalette::-webkit-scrollbar {
+  height: 8px;
+}
+
+#entityPalette::-webkit-scrollbar-track {
+  border-radius: 4px;
+}
+
+#entityPalette::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+#entityPalette::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.entity-btn {
+  width: 100px;
+  height: 100px;
+  padding: 0;
+  background-color: #262626;
+  border: 1px solid #444;
+  color: #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.entity-btn:hover {
+  background-color: #333;
+  border-color: #555;
+}
+
+.entity-btn.active {
+  background-color: #64c8ff;
+  color: #101010;
+  border-color: #64c8ff;
 }

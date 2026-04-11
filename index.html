@@ -25,14 +25,20 @@
   <!-- Canvas Area -->
   <div id="canvasContainer">
     <canvas id="editor" class="js-noMenu"></canvas>
+    <div id="entityPalette" class="entity-palette">
+      <button class="entity-btn" data-entity="player">Player</button>
+      <button class="entity-btn" data-entity="enemy">Enemy</button>
+      <button class="entity-btn" data-entity="item">Item</button>
+    </div>
   </div>
 
   <!-- Bottom Bar (Tools) -->
   <div id="bottomBar" class="bar">
     <div class="bar-content">
       <button class="tool-btn active" data-tool="camera" data-text="Camera"></button>
+      <button class="tool-btn" data-tool="select" data-text="Select"></button>
+      <button class="tool-btn" data-tool="entity" data-text="Entities"></button>
       <button class="tool-btn" data-tool="room" data-text="Rooms"></button>
-      <button class="tool-btn" data-tool="entity" data-text="Place Entity"></button>
       <button class="tool-btn" data-tool="erase" data-text="Erase"></button>
     </div>
   </div>

@@ -6,6 +6,19 @@
 import { config, mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive, screenToWorld } from './editor.js';
 
 /**
+ * Update entity button highlighting based on selected entity type
+ */
+function updateEntityButtonsUI() {
+  const entityButtons = document.querySelectorAll('.entity-btn');
+  entityButtons.forEach((button) => {
+    button.classList.remove('active');
+    if (button.dataset.entity === state.selectedEntityType) {
+      button.classList.add('active');
+    }
+  });
+}
+
+/**
  * Update tool button highlighting based on current state
  */
 function updateToolButtonsUI() {
@@ -169,6 +182,20 @@ export function setupInputHandlers(canvas, state) {
 
   // Initialize button highlighting
   updateToolButtonsUI();
+
+  /**
+   * ENTITY BUTTON SELECTION
+   * Handles clicking the entity buttons in the palette
+   */
+  const entityButtons = document.querySelectorAll('.entity-btn');
+  entityButtons.forEach((button) => {
+    button.addEventListener('click', (event) => {
+      state.selectedEntityType = event.target.dataset.entity;
+      // Update UI
+      entityButtons.forEach((btn) => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    });
+  });
 
   // Set up hotkey button toggle
   const hotkeyBtn = document.getElementById('hotkeyBtn');
