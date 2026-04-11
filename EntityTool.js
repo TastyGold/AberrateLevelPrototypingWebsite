@@ -1,4 +1,5 @@
 import { Tool } from './Tool.js';
+import { onEntityHotkeyPressed } from './editor.js';
 
 export class EntityTool extends Tool {
   onEnter(state) {
@@ -47,5 +48,11 @@ export class EntityTool extends Tool {
   }
 
   onMouseUp(state, button) {
+  }
+
+  onKeyDown(state, key) {
+  }
+
+  onKeyUp(state, key) {
   }
 }

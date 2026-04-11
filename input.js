@@ -3,7 +3,7 @@
  * Handles mouse movement, clicks, keyboard, and UI interactions
  */
 
-import { config, mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive, screenToWorld, entityTypes } from './editor.js';
+import { config, mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive, screenToWorld, entityTypes, onEntityHotkeyPressed } from './editor.js';
 
 /**
  * Generate entity buttons dynamically from entityTypes
@@ -32,7 +32,7 @@ function generateEntityButtons() {
 /**
  * Update entity button highlighting based on selected entity type
  */
-function updateEntityButtonsUI() {
+function updateEntityButtonsUI(state) {
   const entityButtons = document.querySelectorAll('.entity-btn');
   entityButtons.forEach((button) => {
     button.classList.remove('active');
@@ -174,9 +174,17 @@ export function setupInputHandlers(canvas, state) {
    */
   document.addEventListener('keydown', (event) => {
     if (event.repeat) return; // don't allow repeat key pressed for held key
+    const lastTool = state.currentTool;
     keyDown(event.key);
-    // always update tool button ui to account for hotkeys being pressed
-    updateToolButtonsUI();
+    if (event.key <= '9' && event.key >= '1') {
+      onEntityHotkeyPressed(event.key);
+      setTool('entity'); // switch to entity tool when entity hotkey is pressed
+      updateEntityButtonsUI(state);
+    }
+    const newTool = state.currentTool;
+    if (lastTool !== newTool) {
+      updateToolButtonsUI();
+    }
   });
 
   /**

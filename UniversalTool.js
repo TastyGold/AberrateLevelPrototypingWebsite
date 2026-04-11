@@ -1,5 +1,5 @@
 import { Tool } from './Tool.js';
-import { config, panCamera, setTool, activateAltOverride, deactivateAltOverride } from './editor.js';
+import { config, panCamera, setTool, activateAltOverride, deactivateAltOverride, onEntityHotkeyPressed } from './editor.js';
 
 /**
  * Universal tool for handling various editor actions
@@ -53,8 +53,7 @@ export class UniversalTool extends Tool {
 		for (const [toolName, hotkey] of Object.entries(config.hotkeys.tools)) {
 			if (key.toLowerCase() === hotkey) {
 				setTool(toolName);
-				
-				break;
+				return; // stop checking other hotkeys after a match is found;
 			}
 		}
 	}
