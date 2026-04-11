@@ -172,7 +172,6 @@ export function setupInputHandlers(canvas, state) {
 
   // Set up hotkey button toggle
   const hotkeyBtn = document.getElementById('hotkeyBtn');
-  console.log('Hotkey button found:', hotkeyBtn);
   hotkeyBtn.innerHTML = config.enableToolHotkeys ? hotkeyBtn.dataset.activetext : hotkeyBtn.dataset.inactivetext;
   hotkeyBtn.addEventListener('click', () => {
     config.enableToolHotkeys = !config.enableToolHotkeys;

@@ -42,7 +42,6 @@ export class UniversalTool extends Tool {
 	}
 
 	onKeyDown(state, key) {
-		console.log(`Key down: ${key}`);
 		if (key.toLowerCase() === config.altModeKey) {
 			state.input.isAltDown = true;
 			// Handle Alt key specially for temporary camera override
