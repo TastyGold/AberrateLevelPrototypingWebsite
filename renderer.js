@@ -23,6 +23,11 @@ export function draw(ctx, state) {
     drawHighlightedTile(ctx, state);
   }
 
+  if (state.placingEntity) {
+    // Draw entity placement preview (if applicable)
+    drawRectLines(ctx, state.entityPreview.x, state.entityPreview.y, state.gridSize, state.gridSize, 'rgba(255, 255, 0, 0.5)', 2);
+  }
+
   // Restore canvas state for screen-space UI elements
   ctx.restore();
 

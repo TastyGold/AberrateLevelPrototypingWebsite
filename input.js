@@ -112,6 +112,10 @@ export function setupInputHandlers(canvas, state) {
     const canvasHeight = canvas.height;
     const worldPos = screenToWorld(x, y, canvasWidth, canvasHeight);
 
+    // Update world coordinates based on camera position and zoom
+    state.mouse.worldX = worldPos.x;
+    state.mouse.worldY = worldPos.y;
+
     // Calculate which grid tile the mouse is over in world coordinates
     state.mouse.gridX = Math.floor(worldPos.x / state.gridSize);
     state.mouse.gridY = Math.floor(worldPos.y / state.gridSize);

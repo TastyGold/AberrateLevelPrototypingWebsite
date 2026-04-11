@@ -16,6 +16,7 @@ export class EntityTool extends Tool {
         }
       });
     }
+    state.placingEntity = true;
   }
 
   onExit(state) {
@@ -25,6 +26,7 @@ export class EntityTool extends Tool {
       palette.classList.add('hidden');
       palette.classList.remove('visible');
     }
+    state.placingEntity = false;
   }
 
   onMouseDown(state, button) {
@@ -33,5 +35,17 @@ export class EntityTool extends Tool {
       // For now, just log or something
       console.log('Placing entity:', state.selectedEntityType, 'at', state.mouse.gridX, state.mouse.gridY);
     }
+  }
+
+  onMouseMove(state) {
+    // Update entity preview position
+    if (state.placingEntity) {
+      state.entityPreview.x = state.mouse.worldX - state.gridSize / 2;
+      state.entityPreview.y = state.mouse.worldY - state.gridSize / 2;
+      state.entityPreview.visible = true;
+    }
+  }
+
+  onMouseUp(state, button) {
   }
 }

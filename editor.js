@@ -75,11 +75,21 @@ export const state = {
 
   // Selected entity type for entity tool
   selectedEntityType: 'box', // Default
+  placingEntity: false, // Whether we're currently placing an entity (for click-and-drag)
+  entityPreview: {
+    x: 0,
+    y: 0,
+    visible: false,
+  },
 
   // Mouse state (in local canvas coordinates)
   mouse: {
-    x: 0,
-    y: 0,
+    canvasX: 0,
+    canvasY: 0,
+    // World coordinates (calculated from screen coordinates + camera)
+    worldX: 0,
+    worldY: 0,
+    // Grid coordinates (calculated from world coordinates)
     gridX: 0,
     gridY: 0,
     // Mouse velocity (delta from previous frame)
