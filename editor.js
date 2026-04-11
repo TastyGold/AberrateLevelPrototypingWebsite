@@ -34,6 +34,8 @@ import { EntityTool } from './EntityTool.js';
 
 // Import entity types
 import { Box } from './Entity.js';
+import { Button } from './Entity.js';
+import { Stairs } from './Entity.js';
 
 // Tool instances
 const tools = {
@@ -48,6 +50,15 @@ const tools = {
 // Entity types available in the editor
 export const entityTypes = {
   box: Box,
+  button: Button,
+  stairs: Stairs,
+  item1:null,
+  item2:null,
+  item3:null,
+  item4:null,
+  item5:null,
+  item6:null,
+  item7:null,
 };
 
 export const state = {

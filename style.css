@@ -145,15 +145,18 @@ body {
 #entityPalette {
   display: none;
   position: absolute;
-  bottom: 56px;
+  bottom: 46px;
   left: 0px;
   z-index: 10;
-  margin:16px;
+  margin: 16px;
+  padding-bottom:6px;
   flex-direction: row;
   gap: 12px;
   overflow-x: auto;
-  max-width: calc(100% - 20px);
+  overflow-y: hidden;
+  max-width: calc(100% - 32px);
   flex-wrap: nowrap;
+  scrollbar-color: #444 transparent;
 }
 
 #entityPalette::-webkit-scrollbar {

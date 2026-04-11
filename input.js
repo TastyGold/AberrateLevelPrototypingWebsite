@@ -17,11 +17,14 @@ function generateEntityButtons() {
 
   // Create a button for each entity type
   Object.entries(entityTypes).forEach(([typeKey, EntityClass]) => {
-    const instance = new EntityClass();
     const button = document.createElement('button');
     button.className = 'entity-btn';
-    button.dataset.entity = instance.getName();
-    button.textContent = instance.getDisplayName();
+    button.dataset.entity = EntityClass?.name;
+    button.textContent = EntityClass?.displayName;
+    if (!button.textContent) {
+      // Fallback to typeKey if displayName is not defined
+      button.textContent = `${typeKey} [null]`;
+    }
     palette.appendChild(button);
   });
 }
