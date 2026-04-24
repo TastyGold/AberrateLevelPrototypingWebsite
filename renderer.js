@@ -18,7 +18,7 @@ export function draw(ctx, state) {
     // Draw room creation preview (if applicable)
     drawRoomTool(ctx, state);
   }
-  else {
+  else if (!state.placingEntity){
     // Draw highlighted tile (in world coordinates)
     drawHighlightedTile(ctx, state);
   }
@@ -182,7 +182,7 @@ function drawDebugMouse(ctx, state) {
 
   // Draw velocity indicator (small line showing delta)
   if (state.mouse.deltaX !== 0 || state.mouse.deltaY !== 0) {
-    drawLine(ctx, x, y, x + state.mouse.deltaX * 2, y + state.mouse.deltaY * 2, '#ffff00', 1);
+    drawLine(ctx, x, y, x - state.mouse.deltaX, y - state.mouse.deltaY, '#ffff00', 1);
   }
 
   // If left mouse is down, draw a rectangle from mouse down position to current position
