@@ -1,6 +1,6 @@
 import { Tool } from './Tool.js';
-import { entityTypes } from "./entityTypes.js";
-import { TransformComponent } from "./components/TransformComponent.js";
+import { entityTypes } from "../editor.js";
+import { TransformComponent } from "../components/TransformComponent.js";
 
 export class EntityTool extends Tool {
   onEnter(state) {

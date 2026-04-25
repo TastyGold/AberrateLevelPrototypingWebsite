@@ -3,8 +3,7 @@
  * Handles mouse movement, clicks, keyboard, and UI interactions
  */
 
-import { config, mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive, screenToWorld, onEntityHotkeyPressed } from './editor.js';
-import { entityTypes } from "./entityTypes.js";
+import { config, mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive, screenToWorld, onEntityHotkeyPressed, entityTypes } from './editor.js';
 
 /**
  * Generate entity buttons dynamically from entityTypes

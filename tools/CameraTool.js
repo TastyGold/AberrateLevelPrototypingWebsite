@@ -1,5 +1,5 @@
 import { Tool } from './Tool.js';
-import { panCamera } from './editor.js';
+import { panCamera } from '../editor.js';
 
 /**
  * Camera tool for panning and zooming the view

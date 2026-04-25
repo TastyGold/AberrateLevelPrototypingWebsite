@@ -27,13 +27,11 @@ export const config = {
 };
 
 // Import tools
-import { CameraTool } from './CameraTool.js';
-import { RoomTool } from './RoomTool.js';
-import { UniversalTool } from './UniversalTool.js';
-import { EntityTool } from './EntityTool.js';
+import { CameraTool } from './tools/CameraTool.js';
+import { RoomTool } from './tools/RoomTool.js';
+import { UniversalTool } from './tools/UniversalTool.js';
+import { EntityTool } from './tools/EntityTool.js';
 
-// Import entity types
-import { entityTypes } from "./entityTypes.js";
 
 // Tool instances
 const tools = {
@@ -43,6 +41,19 @@ const tools = {
   entity: new EntityTool(), // Placeholder for future EntityTool
   room: new RoomTool(),
   erase: null, // Placeholder for future EraseTool
+};
+
+// Import entity types
+import { Box } from './entities/Box.js';
+import { Button } from './entities/Button.js';
+import { Stairs } from './entities/Stairs.js';
+
+// Entity types
+export const entityTypes = {
+    box: Box,
+    button: Button,
+    stairs: Stairs,
+    player: null, // Placeholder for future Player entity
 };
 
 export const state = {

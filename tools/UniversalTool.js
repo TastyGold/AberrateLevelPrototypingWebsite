@@ -1,5 +1,5 @@
 import { Tool } from './Tool.js';
-import { config, panCamera, setTool, activateAltOverride, deactivateAltOverride, onEntityHotkeyPressed } from './editor.js';
+import { config, panCamera, setTool, activateAltOverride, deactivateAltOverride, onEntityHotkeyPressed } from '../editor.js';
 
 /**
  * Universal tool for handling various editor actions
