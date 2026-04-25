@@ -22,7 +22,6 @@ export class SpriteRendererComponent extends Component {
 
         ctx.save(); // Save canvas state
 
-
         // Apply transformations: translate to center, rotate, scale, translate back
         ctx.translate(transform.x, transform.y); // Move origin to entity center
         ctx.rotate(transform.rotation); // Rotate coordinate system

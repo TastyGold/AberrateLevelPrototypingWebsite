@@ -1,6 +1,7 @@
-import { screenToWorld } from './editor.js';
+import { config, screenToWorld } from './editor.js';
 import { SpriteRendererComponent } from "./components/SpriteRendererComponent.js";
 import { TransformComponent } from "./components/TransformComponent.js";
+import { BoxColliderComponent } from './components/BoxColliderComponent.js';
 
 export function draw(ctx, state) {
   // Clear canvas
@@ -32,6 +33,11 @@ export function draw(ctx, state) {
 
   // Draw entities
   drawEntites(ctx, state);
+
+  // Draw entity collisions (if enabled)
+  if (config.showEntityCollision) {
+    drawEntityCollisions(ctx, state);
+  }
 
   // Restore canvas state for screen-space UI elements
   ctx.restore();
@@ -149,13 +155,26 @@ function drawEntites(ctx, state) {
     const sprite = entity.getComponent(SpriteRendererComponent);
     if (sprite && transform) {
       sprite.draw(ctx, transform);
-      return;
+      return; // Skip fallback drawing if sprite is present
     }
 
     // fallback to draw when theres no spritecomponent
     if (transform) {
       ctx.fillStyle = 'rgb(255, 0, 255)';
       ctx.fillRect(transform.x - 20, transform.y - 20, 40, 40);
+    }
+  });
+}
+
+function drawEntityCollisions(ctx, state) {
+  state.entities.forEach(entity => {
+    const transform = entity.getComponent(TransformComponent);
+    const collider = entity.getComponent(BoxColliderComponent);
+    if (collider && transform) {
+      ctx.strokeStyle = config.collisionOutlineColor;
+      ctx.lineWidth = 1 / state.camera.zoom;
+      if (collider.highlighted) ctx.lineWidth *= 3;
+      ctx.strokeRect(transform.x - collider.width / 2, transform.y - collider.height / 2, collider.width, collider.height);
     }
   });
 }

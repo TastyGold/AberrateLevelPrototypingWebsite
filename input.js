@@ -242,4 +242,12 @@ export function setupInputHandlers(canvas, state) {
     hotkeyBtn.innerHTML = config.enableToolHotkeys ? hotkeyBtn.dataset.activetext : hotkeyBtn.dataset.inactivetext;
     updateToolButtonsUI();
   });
+
+    // Set up hitbox button toggle
+  const hitboxBtn = document.getElementById('hitboxBtn');
+  hitboxBtn.innerHTML = config.showEntityCollision ? hitboxBtn.dataset.activetext : hitboxBtn.dataset.inactivetext;
+  hitboxBtn.addEventListener('click', () => {
+    config.showEntityCollision = !config.showEntityCollision;
+    hitboxBtn.innerHTML = config.showEntityCollision ? hitboxBtn.dataset.activetext : hitboxBtn.dataset.inactivetext;
+  });
 }

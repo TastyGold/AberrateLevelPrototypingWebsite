@@ -7,6 +7,7 @@ import { TransformComponent } from "./TransformComponent.js";
 export class BoxColliderComponent extends Component {
     constructor({ offsetX = 0, offsetY = 0, width = 40, height = 40 } = {}) {
         super();
+        this.highlighted = false; // Whether to draw the collider with a highlight (for debugging)
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.width = width;

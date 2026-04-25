@@ -23,7 +23,11 @@ export const config = {
       room: 'r',
       erase: 't',
     }
-  }
+  },
+  // Hitbox settings
+  showEntityCollision: true,
+  // Colors
+  collisionOutlineColor: 'rgba(255, 255, 0, 0.8)',
 };
 
 // Import tools
@@ -31,14 +35,15 @@ import { CameraTool } from './tools/CameraTool.js';
 import { RoomTool } from './tools/RoomTool.js';
 import { UniversalTool } from './tools/UniversalTool.js';
 import { EntityTool } from './tools/EntityTool.js';
+import { SelectTool } from './tools/SelectTool.js';
 
 
 // Tool instances
 const tools = {
   universal: new UniversalTool(),
   camera: new CameraTool(),
-  select: null,
-  entity: new EntityTool(), // Placeholder for future EntityTool
+  select: new SelectTool(),
+  entity: new EntityTool(),
   room: new RoomTool(),
   erase: null, // Placeholder for future EraseTool
 };
@@ -54,6 +59,7 @@ export const entityTypes = {
     button: Button,
     stairs: Stairs,
     player: null, // Placeholder for future Player entity
+    enemy: null, // Placeholder for future Enemy entity
 };
 
 export const state = {
@@ -69,8 +75,8 @@ export const state = {
 
   // Mouse state (in local canvas coordinates)
   mouse: {
-    canvasX: 0,
-    canvasY: 0,
+    x: 0,
+    y: 0,
     // World coordinates (calculated from screen coordinates + camera)
     worldX: 0,
     worldY: 0,
@@ -104,6 +110,9 @@ export const state = {
   // Current active tool
   currentTool: tools.camera,
   isAltOverride: false,
+
+  // Select Tool
+  dragSelecting: false,
 
   // Room Tool
   creatingRoom: false,
