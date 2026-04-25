@@ -1,5 +1,6 @@
 import { Tool } from './Tool.js';
-import { TransformComponent, entityTypes } from './Entity.js';
+import { entityTypes } from "./entityTypes.js";
+import { TransformComponent } from "./TransformComponent.js";
 
 export class EntityTool extends Tool {
   onEnter(state) {
@@ -43,9 +44,6 @@ export class EntityTool extends Tool {
       if (transform) {
         transform.x = state.mouse.worldX;
         transform.y = state.mouse.worldY;
-        transform.rotation = Math.PI / 4 * Math.floor(Math.random() * 8); // Random rotation (0, 90, 180, or 270 degrees)
-        transform.scaleX = 2;
-        transform.scaleY = 2;
       }
       state.entities.push(entity);
       console.log('Placing entity:', entity.getName(), 'at', transform?.x, transform?.y);

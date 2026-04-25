@@ -33,7 +33,7 @@ import { UniversalTool } from './UniversalTool.js';
 import { EntityTool } from './EntityTool.js';
 
 // Import entity types
-import { entityTypes } from './Entity.js';
+import { entityTypes } from "./entityTypes.js";
 
 // Tool instances
 const tools = {
@@ -44,9 +44,6 @@ const tools = {
   room: new RoomTool(),
   erase: null, // Placeholder for future EraseTool
 };
-
-// Entity types available in the editor
-export { entityTypes } from './Entity.js';
 
 export const state = {
   // Grid properties
