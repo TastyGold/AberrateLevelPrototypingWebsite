@@ -89,6 +89,8 @@ export const state = {
     // Position where mouse was last pressed down (for drag calculations)
     mouseDownX: 0,
     mouseDownY: 0,
+    mouseDownWorldX: 0,
+    mouseDownWorldY: 0,
     mouseDownGridX: 0,
     mouseDownGridY: 0,
   },
@@ -113,6 +115,7 @@ export const state = {
 
   // Select Tool
   dragSelecting: false,
+  selectedEntites: [],
 
   // Room Tool
   creatingRoom: false,

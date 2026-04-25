@@ -19,7 +19,7 @@ export class SelectTool extends Tool {
   }
 
   onMouseDown(state, button) {
-
+    state.dragSelecting = true;
   }
 
   onMouseMove(state) {
@@ -28,23 +28,22 @@ export class SelectTool extends Tool {
     for (const entity of state.entities) {
       const transform = entity.getComponent(TransformComponent);
       const collider = entity.getComponent(BoxColliderComponent);
-        if (transform && collider) {
-            if (collider.pointIntersect(state.mouse.worldX, state.mouse.worldY)) {
-                console.log(state.mouse.worldX);
-                collider.highlighted = true;
-                foundEntity = true;
-            } else {
-                collider.highlighted = false;
-            }
+      if (transform && collider) {
+        if (collider.pointIntersect(state.mouse.worldX, state.mouse.worldY) || (state.dragSelecting && collider.aabbIntersectCorners(state.mouse.mouseDownWorldX, state.mouse.worldX, state.mouse.mouseDownWorldY, state.mouse.worldY))) {
+          collider.highlighted = true;
+          foundEntity = true;
+        } else {
+          collider.highlighted = false;
         }
+      }
     }
   }
 
   onMouseUp(state, button) {
+    state.dragSelecting = false;
   }
 
   onKeyDown(state, key) {
-    // TODO: Implement keyboard shortcuts for select tool
   }
 
   onKeyUp(state, key) {

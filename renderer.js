@@ -31,6 +31,11 @@ export function draw(ctx, state) {
     drawRectLines(ctx, state.entityPreview.x, state.entityPreview.y, state.gridSize, state.gridSize, 'rgba(255, 255, 0, 0.5)', 2);
   }
 
+  if (state.selectedToolName === 'select') {
+    // Draw selection rectangle (in world coordinates)
+    drawSelectTool(ctx, state);
+  }
+
   // Draw entities
   drawEntites(ctx, state);
 
@@ -147,6 +152,28 @@ function drawRoomTool(ctx, state) {
   ctx.strokeStyle = '#64ff98';
   ctx.lineWidth = 2 / camera.zoom;
   ctx.strokeRect(x, y, w, h);
+}
+
+function drawSelectTool(ctx, state) {
+  // draw selection rectangle if dragging
+  if (state.dragSelecting) {
+    const { mouse, camera } = state;
+    const ax = mouse.mouseDownWorldX;
+    const ay = mouse.mouseDownWorldY;
+    const bx = mouse.worldX;
+    const by = mouse.worldY;
+    console.log ('Drawing selection rectangle from', ax, ay, 'to', bx, by);
+
+    const x = Math.min(ax, bx);
+    const y = Math.min(ay, by);
+    const w = Math.abs(bx - ax);
+    const h = Math.abs(by - ay);
+    ctx.strokeStyle = 'rgba(255, 255, 0, 0.8)';
+    ctx.lineWidth = 2 / camera.zoom;
+    ctx.strokeRect(x, y, w, h);
+    ctx.fillStyle = 'rgba(255, 255, 0, 0.1)';
+    ctx.fillRect(x, y, w, h);
+  }
 }
 
 function drawEntites(ctx, state) {

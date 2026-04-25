@@ -134,7 +134,9 @@ export function setupInputHandlers(canvas, state) {
     console.log('Mouse down at', state.mouse.mouseDownX, state.mouse.mouseDownY, 'grid', state.mouse.gridX, state.mouse.gridY);
     state.mouse.mouseDownGridX = state.mouse.gridX;
     state.mouse.mouseDownGridY = state.mouse.gridY;
-    console.log('grid positions:', state.mouse.mouseDownGridX, state.mouse.mouseDownGridY);
+    console.log('grid positions:', state.mouse.mouseDownGridX, state.mouse.mouseDownGridY);  
+    state.mouse.mouseDownWorldX = state.mouse.worldX;
+    state.mouse.mouseDownWorldY = state.mouse.worldY;
     mouseDown(event.button);
   });
 

@@ -38,8 +38,20 @@ export class BoxColliderComponent extends Component {
         if (!(otherBoxCollider instanceof BoxColliderComponent)) {
             return false;
         }
-        const a = this.getBounds();
         const b = otherBoxCollider.getBounds();
-        return a.minX < b.maxX && a.maxX > b.minX && a.minY < b.maxY && a.maxY > b.minY;
+        return this.aabbIntersect(b.minX, b.maxX, b.minY, b.maxY);
+    }
+
+    aabbIntersectCorners(x1, x2, y1, y2) {
+        let minX = Math.min(x1, x2);
+        let maxX = Math.max(x1, x2);
+        let minY = Math.min(y1, y2);
+        let maxY = Math.max(y1, y2);
+        return this.aabbIntersect(minX, maxX, minY, maxY);
+    }
+
+    aabbIntersect(minX, maxX, minY, maxY) {
+        const other = this.getBounds();
+        return minX < other.maxX && maxX > other.minX && minY < other.maxY && maxY > other.minY;
     }
 }
