@@ -1,4 +1,5 @@
 import { screenToWorld } from './editor.js';
+import { TransformComponent, SpriteRendererComponent } from './Entity.js';
 
 export function draw(ctx, state) {
   // Clear canvas
@@ -143,25 +144,18 @@ function drawRoomTool(ctx, state) {
 
 function drawEntites(ctx, state) {
   state.entities.forEach(entity => {
-    // For now, just draw a simple rectangle for each entity type
-    // color switch based on entity type
-    switch (entity.type) {
-      case 'box':
-        ctx.fillStyle = 'rgba(255, 255, 255, 1)';
-        break;
-      case 'button':
-        ctx.fillStyle = 'rgba(255, 50, 50, 1)';
-        break;
-      case 'stairs':
-        ctx.fillStyle = 'rgba(55, 0, 255, 1)';
-        break;
-      default:
-        ctx.fillStyle = 'rgba(255, 0, 255, 1)';
-        break;
+    const transform = entity.getComponent(TransformComponent);
+    const sprite = entity.getComponent(SpriteRendererComponent);
+    if (sprite && transform) {
+      sprite.draw(ctx, transform);
+      return;
     }
-    const g = state.gridSize;
-    const g2 = g / 2;
-    ctx.fillRect(entity.x - g2, entity.y - g2, g, g);
+
+    // fallback to draw when theres no spritecomponent
+    if (transform) {
+      ctx.fillStyle = 'rgb(255, 0, 255)';
+      ctx.fillRect(transform.x - 20, transform.y - 20, 40, 40);
+    }
   });
 }
 

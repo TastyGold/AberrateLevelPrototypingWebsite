@@ -19,12 +19,10 @@ function generateEntityButtons() {
   Object.entries(entityTypes).forEach(([typeKey, EntityClass]) => {
     const button = document.createElement('button');
     button.className = 'entity-btn';
-    button.dataset.entity = EntityClass?.name;
-    button.textContent = EntityClass?.displayName;
-    if (!button.textContent) {
-      // Fallback to typeKey if displayName is not defined
-      button.textContent = `${typeKey} [null]`;
-    }
+    const staticName = EntityClass?.getName?.();
+    const staticDisplayName = EntityClass?.getDisplayName?.();
+    button.dataset.entity = staticName || typeKey;
+    button.textContent = staticDisplayName ?? staticName ??`${typeKey} [null]`;
     palette.appendChild(button);
   });
 }

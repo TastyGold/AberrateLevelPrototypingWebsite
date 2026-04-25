@@ -1,5 +1,5 @@
 import { Tool } from './Tool.js';
-import { onEntityHotkeyPressed } from './editor.js';
+import { TransformComponent, entityTypes } from './Entity.js';
 
 export class EntityTool extends Tool {
   onEnter(state) {
@@ -32,14 +32,23 @@ export class EntityTool extends Tool {
 
   onMouseDown(state, button) {
     if (button === 0) { // Left click
-      // Place the selected entity at mouse position
-      // For now, just log or something
-      console.log('Placing entity:', state.selectedEntityType, 'at', state.mouse.gridX, state.mouse.gridY);
-      state.entities.push({ // add entity to list
-        type: state.selectedEntityType,
-        x: state.mouse.worldX,
-        y: state.mouse.worldY,
-      });
+      const EntityClass = state.selectedEntityType && entityTypes[state.selectedEntityType];
+      if (!EntityClass) {
+        console.warn('Unknown entity type:', state.selectedEntityType);
+        return;
+      }
+      const entity = new EntityClass();
+      entity.setCubeColor?.(Math.floor(Math.random() * 4));
+      const transform = entity.getComponent(TransformComponent);
+      if (transform) {
+        transform.x = state.mouse.worldX;
+        transform.y = state.mouse.worldY;
+        transform.rotation = Math.PI / 4 * Math.floor(Math.random() * 8); // Random rotation (0, 90, 180, or 270 degrees)
+        transform.scaleX = 2;
+        transform.scaleY = 2;
+      }
+      state.entities.push(entity);
+      console.log('Placing entity:', entity.getName(), 'at', transform?.x, transform?.y);
     }
     console.log(state.entities);
   }
