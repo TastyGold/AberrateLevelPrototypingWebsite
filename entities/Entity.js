@@ -1,4 +1,4 @@
-import { TransformComponent } from "./TransformComponent.js";
+import { TransformComponent } from "../components/TransformComponent.js";
 
 /**
  * Base entity class for all spawned editor entities.

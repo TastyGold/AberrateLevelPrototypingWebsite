@@ -1,6 +1,6 @@
 import { screenToWorld } from './editor.js';
-import { SpriteRendererComponent } from "./SpriteRendererComponent.js";
-import { TransformComponent } from "./TransformComponent.js";
+import { SpriteRendererComponent } from "./components/SpriteRendererComponent.js";
+import { TransformComponent } from "./components/TransformComponent.js";
 
 export function draw(ctx, state) {
   // Clear canvas

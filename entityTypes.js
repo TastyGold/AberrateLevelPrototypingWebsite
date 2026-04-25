@@ -1,6 +1,6 @@
-import { Box } from "./Box.js";
-import { Button } from "./Button.js";
-import { Stairs } from "./Stairs.js";
+import { Box } from "./entities/Box.js";
+import { Button } from "./entities/Button.js";
+import { Stairs } from "./entities/Stairs.js";
 
 export const entityTypes = {
     box: Box,

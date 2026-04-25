@@ -1,7 +1,7 @@
-import { BoxColliderComponent } from "./BoxColliderComponent.js";
+import { BoxColliderComponent } from "../components/BoxColliderComponent.js";
 import { Entity } from "./Entity.js";
-import { SpriteRendererComponent } from "./SpriteRendererComponent.js";
-import { TransformComponent } from "./TransformComponent.js";
+import { SpriteRendererComponent } from "../components/SpriteRendererComponent.js";
+import { TransformComponent } from "../components/TransformComponent.js";
 
 export class Box extends Entity {
     static getName() {
