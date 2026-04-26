@@ -20,18 +20,40 @@ export class SelectTool extends Tool {
   }
 
   onMouseDown(state, button) {
-    state.dragSelecting = true;
-    if (!state.input.isShiftDown) {
-      this.clearSelection(state);
-    }
-
     let entityAtMouse = this.findEntityAtMouse(state);
     if (entityAtMouse) {
-      this.addSelectableToSelection(state, entityAtMouse);
+      let alreadySelected = this.addSelectableToSelection(state, entityAtMouse);
+      if (alreadySelected) {
+        // if entity was already selected, start drag move
+        state.dragMoving = true;
+      }
+    }
+    if (!state.dragMoving) {
+      state.dragSelecting = true;
+      
+      if (!state.input.isShiftDown) {
+        this.clearSelection(state);
+        if (entityAtMouse) {
+          this.addSelectableToSelection(state, entityAtMouse);
+        }
+      }
     }
   }
 
   onMouseMove(state) {
+
+    // handle drag move of selected entities
+    if (state.dragMoving) {
+      state.selectedEntites.forEach(entity => {
+        const transform = entity.getComponent(TransformComponent);
+        if (transform) {
+          transform.x += state.mouse.deltaX / state.camera.zoom;
+          transform.y += state.mouse.deltaY / state.camera.zoom;
+        }
+      });
+      return;
+    }
+
     this.clearHighlighted(state);
     // Highlight entity under mouse if not currently drag selecting
     if (!state.dragSelecting) {
@@ -57,6 +79,7 @@ export class SelectTool extends Tool {
 
   onMouseUp(state, button) {
     state.dragSelecting = false;
+    state.dragMoving = false;
     this.addHighlightedEntitiesToSelection(state);
   }
 
@@ -100,7 +123,9 @@ export class SelectTool extends Tool {
         editorIntegrationComponent.onSelected();
       }
       state.selectedEntites.push(entity);
+      return false; // entity was not previously selected, added to selection now
     }
+    return true; // entity was already in selection
   }
 
   // only method that removes entity from selection (handles onDeselected callback)

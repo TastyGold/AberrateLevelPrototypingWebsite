@@ -118,6 +118,7 @@ export const state = {
   dragSelecting: false,
   selectedEntites: [],
   highlightedEntities: [],
+  dragMoving: false,
 
   // Room Tool
   creatingRoom: false,
