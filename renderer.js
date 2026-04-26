@@ -21,7 +21,7 @@ export function draw(ctx, state) {
     // Draw room creation preview (if applicable)
     drawRoomTool(ctx, state);
   }
-  else if (!state.placingEntity){
+  else if (!state.placingEntity && state.selectedToolName !== 'select') {
     // Draw highlighted tile (in world coordinates)
     drawHighlightedTile(ctx, state);
   }
@@ -38,6 +38,13 @@ export function draw(ctx, state) {
 
   // Draw entities
   drawEntites(ctx, state);
+
+  if (state.selectedToolName === 'select') {
+    // Draw selection outlines
+    drawSelectionOutline(ctx, state);
+    // Draw selection highlights
+    drawSelectionHighlight(ctx, state);
+  }
 
   // Draw entity collisions (if enabled)
   if (config.showEntityCollision) {
@@ -162,8 +169,7 @@ function drawSelectTool(ctx, state) {
     const ay = mouse.mouseDownWorldY;
     const bx = mouse.worldX;
     const by = mouse.worldY;
-    console.log ('Drawing selection rectangle from', ax, ay, 'to', bx, by);
-
+    
     const x = Math.min(ax, bx);
     const y = Math.min(ay, by);
     const w = Math.abs(bx - ax);
@@ -195,15 +201,39 @@ function drawEntites(ctx, state) {
 
 function drawEntityCollisions(ctx, state) {
   state.entities.forEach(entity => {
-    const transform = entity.getComponent(TransformComponent);
-    const collider = entity.getComponent(BoxColliderComponent);
-    if (collider && transform) {
-      ctx.strokeStyle = config.collisionOutlineColor;
-      ctx.lineWidth = 1 / state.camera.zoom;
-      if (collider.highlighted) ctx.lineWidth *= 3;
-      ctx.strokeRect(transform.x - collider.width / 2, transform.y - collider.height / 2, collider.width, collider.height);
+    drawEntityOutline(ctx, state, entity, 'rgba(255, 255, 0, 0.8)','rgba(0, 0, 0, 0)', 1, 0);
+  });
+}
+
+function drawSelectionOutline(ctx, state) {
+  state.selectedEntites.forEach(entity => {
+    drawEntityOutline(ctx, state, entity, 'rgba(0, 132, 255, 1.0)','rgba(0, 132, 255, 0.1)', 2, 3.5);
+  });
+}
+
+function drawSelectionHighlight(ctx, state) {
+  state.highlightedEntities.forEach(entity => {
+    if (!state.selectedEntites.some(selectedEntity => selectedEntity.id === entity.id)) {
+    drawEntityOutline(ctx, state, entity, 'rgba(0, 132, 255, 0.6)','rgba(0, 132, 255, 0.1)', 1, 2.5);
     }
   });
+}
+
+function drawEntityOutline(ctx, state, entity, color, fill, lineWidth, padding) {
+  const transform = entity.getComponent(TransformComponent);
+  const collider = entity.getComponent(BoxColliderComponent);
+  if (transform && collider) {
+    const halfWidth = collider.width / 2 + padding;
+    const halfHeight = collider.height / 2 + padding;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lineWidth / state.camera.zoom;
+    console.log(lineWidth, state.camera.zoom, ctx.lineWidth);
+    ctx.strokeRect(transform.x - halfWidth, transform.y - halfHeight, halfWidth * 2, halfHeight * 2);
+    if (fill) {
+      ctx.fillStyle = fill;
+      ctx.fillRect(transform.x - halfWidth, transform.y - halfHeight, halfWidth * 2, halfHeight * 2);
+    }
+  }
 }
 
 /**

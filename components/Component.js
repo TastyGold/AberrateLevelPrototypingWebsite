@@ -7,3 +7,5 @@ export class Component {
         this.entity = entity;
     }
 }
+
+

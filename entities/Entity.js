@@ -1,3 +1,4 @@
+import { EditorIntegrationComponent } from "../components/EditorIntegrationComponent.js";
 import { TransformComponent } from "../components/TransformComponent.js";
 
 /**
@@ -7,7 +8,11 @@ export class Entity {
   constructor() {
     this.components = [];
     this.addComponent(new TransformComponent());
+    this.addComponent(new EditorIntegrationComponent());
+    this.id = Entity.nextEntityID++;
   }
+
+  static nextEntityID = 0;
 
   static getName() {
     return 'entity';

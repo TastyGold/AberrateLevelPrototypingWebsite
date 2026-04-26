@@ -1,6 +1,7 @@
 import { Tool } from './Tool.js';
 import { TransformComponent } from '../components/TransformComponent.js';
 import { BoxColliderComponent } from '../components/BoxColliderComponent.js';
+import { EditorIntegrationComponent } from '../components/EditorIntegrationComponent.js';
 
 /**
  * Select tool for selecting and manipulating entities
@@ -20,9 +21,23 @@ export class SelectTool extends Tool {
 
   onMouseDown(state, button) {
     state.dragSelecting = true;
+    this.clearSelection(state);
+    // check for entity under mouse cursor and select it
+    let foundEntity = false;  
+    for (const entity of state.entities) {
+      const transform = entity.getComponent(TransformComponent);
+      const collider = entity.getComponent(BoxColliderComponent);
+      if (transform && collider) {
+        if (collider.pointIntersect(state.mouse.worldX, state.mouse.worldY)) {
+          this.addSelectableToSelection(state, entity);
+          foundEntity = true;
+        }
+      }
+    }
   }
 
   onMouseMove(state) {
+    this.clearHighlighted(state);
     // check for entity under mouse cursor and highlight it
     let foundEntity = false;
     for (const entity of state.entities) {
@@ -30,10 +45,10 @@ export class SelectTool extends Tool {
       const collider = entity.getComponent(BoxColliderComponent);
       if (transform && collider) {
         if (collider.pointIntersect(state.mouse.worldX, state.mouse.worldY) || (state.dragSelecting && collider.aabbIntersectCorners(state.mouse.mouseDownWorldX, state.mouse.worldX, state.mouse.mouseDownWorldY, state.mouse.worldY))) {
-          collider.highlighted = true;
+          this.addSelectableToHighlighted(state, entity);
           foundEntity = true;
         } else {
-          collider.highlighted = false;
+          this.removeSelectableFromHighlighted(state, entity);
         }
       }
     }
@@ -41,6 +56,8 @@ export class SelectTool extends Tool {
 
   onMouseUp(state, button) {
     state.dragSelecting = false;
+    this.addHighlightedEntitiesToSelection(state);
+    console.log(state.selectedEntites);
   }
 
   onKeyDown(state, key) {
@@ -48,5 +65,64 @@ export class SelectTool extends Tool {
 
   onKeyUp(state, key) {
     // TODO: Implement keyboard shortcuts for select tool
+  }
+
+  addHighlightedEntitiesToSelection(state) {
+    for (const entity of state.highlightedEntities) {
+      this.addSelectableToSelection(state, entity);
+    }
+  }
+
+  clearSelection(state) {
+    for (const entity of state.selectedEntites) {
+      this.removeSelectableFromSelection(state, entity);
+    }
+  }
+
+  // only method that adds entity to selection (handles onSelected callback)
+  addSelectableToSelection(state, entity) {
+    if (!state.selectedEntites.some(selectedEntity => selectedEntity.id === entity.id)) {
+      const editorIntegrationComponent = entity.getComponent(EditorIntegrationComponent);
+      if (editorIntegrationComponent) {
+        editorIntegrationComponent.onSelected();
+      }
+      state.selectedEntites.push(entity);
+    }
+  }
+
+  // only method that removes entity from selection (handles onDeselected callback)
+  removeSelectableFromSelection(state, entity) {
+    const editorIntegrationComponent = entity.getComponent(EditorIntegrationComponent);
+    if (editorIntegrationComponent) {
+      editorIntegrationComponent.onDeselected();
+    }
+    state.selectedEntites = state.selectedEntites.filter(selectedEntity => selectedEntity.id !== entity.id);
+  }
+
+  clearHighlighted(state) {
+    for (const entity of state.highlightedEntities) {
+      this.removeSelectableFromHighlighted(state, entity);
+    }
+    state.highlightedEntities = [];
+  }
+
+  // only method that adds entity to highlighted (handles onHighlighted callback)
+  addSelectableToHighlighted(state, entity) {
+    if (!state.highlightedEntities.some(selectedEntity => selectedEntity.id === entity.id)) {
+      const editorIntegrationComponent = entity.getComponent(EditorIntegrationComponent);
+      if (editorIntegrationComponent) {
+        editorIntegrationComponent.onHighlighted();
+      }
+      state.highlightedEntities.push(entity);
+    }
+  }
+
+  // only method that removes entity from highlighted (handles onUnhighlighted callback)
+  removeSelectableFromHighlighted(state, entity) {
+    const editorIntegrationComponent = entity.getComponent(EditorIntegrationComponent);
+    if (editorIntegrationComponent) {
+      editorIntegrationComponent.onUnhighlighted();
+    }
+    state.highlightedEntities = state.highlightedEntities.filter(selectedEntity => selectedEntity.id !== entity.id);
   }
 }
