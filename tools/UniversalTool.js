@@ -49,6 +49,9 @@ export class UniversalTool extends Tool {
 				activateAltOverride();
 			}
 		}
+		else if (key.toLowerCase() === 'shift') {
+			state.input.isShiftDown = true;
+		}
 		// handle tool hotkeys regardless of config enable
 		for (const [toolName, hotkey] of Object.entries(config.hotkeys.tools)) {
 			if (key.toLowerCase() === hotkey) {
@@ -67,6 +70,9 @@ export class UniversalTool extends Tool {
 			if (state.isAltOverride) {
 				deactivateAltOverride();
 			}
+		}
+		else if (key.toLowerCase() === 'shift') {
+			state.input.isShiftDown = false;
 		}
 	}
 }3

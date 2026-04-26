@@ -21,32 +21,33 @@ export class SelectTool extends Tool {
 
   onMouseDown(state, button) {
     state.dragSelecting = true;
-    this.clearSelection(state);
-    // check for entity under mouse cursor and select it
-    let foundEntity = false;  
-    for (const entity of state.entities) {
-      const transform = entity.getComponent(TransformComponent);
-      const collider = entity.getComponent(BoxColliderComponent);
-      if (transform && collider) {
-        if (collider.pointIntersect(state.mouse.worldX, state.mouse.worldY)) {
-          this.addSelectableToSelection(state, entity);
-          foundEntity = true;
-        }
-      }
+    if (!state.input.isShiftDown) {
+      this.clearSelection(state);
+    }
+
+    let entityAtMouse = this.findEntityAtMouse(state);
+    if (entityAtMouse) {
+      this.addSelectableToSelection(state, entityAtMouse);
     }
   }
 
   onMouseMove(state) {
     this.clearHighlighted(state);
-    // check for entity under mouse cursor and highlight it
-    let foundEntity = false;
+    // Highlight entity under mouse if not currently drag selecting
+    if (!state.dragSelecting) {
+      let entityAtMouse = this.findEntityAtMouse(state);
+      if (entityAtMouse) {
+        this.addSelectableToHighlighted(state, entityAtMouse);
+      }
+      return;
+    }
+    // check for entities in drag selection box
     for (const entity of state.entities) {
       const transform = entity.getComponent(TransformComponent);
       const collider = entity.getComponent(BoxColliderComponent);
       if (transform && collider) {
-        if (collider.pointIntersect(state.mouse.worldX, state.mouse.worldY) || (state.dragSelecting && collider.aabbIntersectCorners(state.mouse.mouseDownWorldX, state.mouse.worldX, state.mouse.mouseDownWorldY, state.mouse.worldY))) {
+        if (state.dragSelecting && collider.aabbIntersectCorners(state.mouse.mouseDownWorldX, state.mouse.worldX, state.mouse.mouseDownWorldY, state.mouse.worldY)) {
           this.addSelectableToHighlighted(state, entity);
-          foundEntity = true;
         } else {
           this.removeSelectableFromHighlighted(state, entity);
         }
@@ -57,7 +58,6 @@ export class SelectTool extends Tool {
   onMouseUp(state, button) {
     state.dragSelecting = false;
     this.addHighlightedEntitiesToSelection(state);
-    console.log(state.selectedEntites);
   }
 
   onKeyDown(state, key) {
@@ -65,6 +65,19 @@ export class SelectTool extends Tool {
 
   onKeyUp(state, key) {
     // TODO: Implement keyboard shortcuts for select tool
+  }
+
+  findEntityAtMouse(state) { 
+    for (const entity of state.entities) {
+      const transform = entity.getComponent(TransformComponent);
+      const collider = entity.getComponent(BoxColliderComponent);
+      if (transform && collider) {
+        if (collider.pointIntersect(state.mouse.worldX, state.mouse.worldY)) {
+          return entity;
+        }
+      }
+    }
+    return null;
   }
 
   addHighlightedEntitiesToSelection(state) {

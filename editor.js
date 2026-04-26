@@ -25,7 +25,7 @@ export const config = {
     }
   },
   // Hitbox settings
-  showEntityCollision: true,
+  showEntityCollision: false,
   // Colors
   collisionOutlineColor: 'rgba(255, 255, 0, 0.8)',
 };
@@ -107,6 +107,7 @@ export const state = {
     isMiddleMouseDown: false,
     isAltDown: false,
     isLeftMouseDown: false,
+    isShiftDown: false,
   },
 
   // Current active tool

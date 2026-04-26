@@ -174,10 +174,10 @@ function drawSelectTool(ctx, state) {
     const y = Math.min(ay, by);
     const w = Math.abs(bx - ax);
     const h = Math.abs(by - ay);
-    ctx.strokeStyle = 'rgba(255, 255, 0, 0.8)';
-    ctx.lineWidth = 2 / camera.zoom;
+    ctx.strokeStyle = 'rgba(0, 132, 255, 1)';
+    ctx.lineWidth = 1 / camera.zoom;
     ctx.strokeRect(x, y, w, h);
-    ctx.fillStyle = 'rgba(255, 255, 0, 0.1)';
+    ctx.fillStyle = 'rgba(0, 132, 255, 0.1)';
     ctx.fillRect(x, y, w, h);
   }
 }
@@ -207,14 +207,15 @@ function drawEntityCollisions(ctx, state) {
 
 function drawSelectionOutline(ctx, state) {
   state.selectedEntites.forEach(entity => {
-    drawEntityOutline(ctx, state, entity, 'rgba(0, 132, 255, 1.0)','rgba(0, 132, 255, 0.1)', 2, 3.5);
+    drawEntityOutline(ctx, state, entity, 'rgba(0, 132, 255, 1.0)','rgba(0, 132, 255, 0.2)', 2, 3.5);
   });
 }
 
 function drawSelectionHighlight(ctx, state) {
   state.highlightedEntities.forEach(entity => {
+    // Only draw highlight if entity is not already selected (to avoid visual clutter)
     if (!state.selectedEntites.some(selectedEntity => selectedEntity.id === entity.id)) {
-    drawEntityOutline(ctx, state, entity, 'rgba(0, 132, 255, 0.6)','rgba(0, 132, 255, 0.1)', 1, 2.5);
+      drawEntityOutline(ctx, state, entity, 'rgba(0, 132, 255, 0.6)','rgba(0, 132, 255, 0.1)', 1.5, 2);
     }
   });
 }
@@ -227,7 +228,6 @@ function drawEntityOutline(ctx, state, entity, color, fill, lineWidth, padding) 
     const halfHeight = collider.height / 2 + padding;
     ctx.strokeStyle = color;
     ctx.lineWidth = lineWidth / state.camera.zoom;
-    console.log(lineWidth, state.camera.zoom, ctx.lineWidth);
     ctx.strokeRect(transform.x - halfWidth, transform.y - halfHeight, halfWidth * 2, halfHeight * 2);
     if (fill) {
       ctx.fillStyle = fill;
