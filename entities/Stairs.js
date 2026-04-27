@@ -17,6 +17,10 @@ export class Stairs extends Entity {
         super();
         const transform = this.getComponent(TransformComponent);
         this.addComponent(new BoxColliderComponent({ width: 40, height: 40 }));
-        this.addComponent(new SpriteRendererComponent({ colorTint: '#55ccff', width: 120, height: 80 }));
+        this.addComponent(new SpriteRendererComponent({ 
+            colorTint: '#55ccff',
+            src: { x: 0, y: 0, w: 40, h: 40 },
+            dest: { x: 0, y: 0, w: 120, h: 80 }
+        }));
     }
 }

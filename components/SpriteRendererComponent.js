@@ -19,8 +19,8 @@ export class SpriteRendererComponent extends Component {
 
     drawSpecific(ctx, transform, source = {x: 0, y: 0, w: 0, h: 0}) {
         // Center sprite on entity position
-        const x = transform.x - this.dest.w / 2;
-        const y = transform.y - this.dest.h / 2;
+        const x = transform.x + this.dest.x - this.dest.w / 2;
+        const y = transform.y + this.dest.y - this.dest.h / 2;
         const w = this.dest.w;
         const h = this.dest.h;
 

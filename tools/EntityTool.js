@@ -39,7 +39,7 @@ export class EntityTool extends Tool {
         return;
       }
       const entity = new EntityClass();
-      entity.setCubeColor?.(Math.floor(Math.random() * 4));
+      entity.setCubeColor?.(Math.floor(Math.random() * 16));
       const transform = entity.getComponent(TransformComponent);
       if (transform) {
         transform.x = state.mouse.worldX;
