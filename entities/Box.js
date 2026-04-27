@@ -26,7 +26,7 @@ export class Box extends Entity {
     constructor() {
         super();
         this.addComponent(new BoxColliderComponent({ width: 40, height: 45 }));
-        const renderer =new SpritesheetRendererComponent({ 
+        const renderer = new SpritesheetRendererComponent({ 
             sprite: Box.BOX_SPRITE_SHEET_PATH, 
             colorTint: '#ffffff', 
             src: { x: 0, y: 0, w: 160, h: 160 }, 
