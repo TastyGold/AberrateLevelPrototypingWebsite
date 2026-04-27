@@ -4,21 +4,25 @@ import { Component } from "./Component.js";
  * Sprite renderer component for drawing entities.
  */
 export class SpriteRendererComponent extends Component {
-    constructor({ sprite = null, colorTint = '#ffffff', width = 40, height = 40 } = {}) {
+    constructor({ sprite = null, colorTint = '#ffffff', src = {x:0, y:0, w:40, h:40}, dest = {x:0, y:0, w:40, h:40}} = {}) {
         super();
         this.sprite = sprite;
         this.colorTint = colorTint;
-        this.width = width;
-        this.height = height;
         this.image = null;
+        this.src = src;
+        this.dest = dest;
     }
 
     draw(ctx, transform) {
+        this.drawSpecific(ctx, transform, this.src);
+    }
+
+    drawSpecific(ctx, transform, source = {x: 0, y: 0, w: 0, h: 0}) {
         // Center sprite on entity position
-        const x = transform.x - this.width / 2;
-        const y = transform.y - this.height / 2;
-        const w = this.width;
-        const h = this.height;
+        const x = transform.x - this.dest.w / 2;
+        const y = transform.y - this.dest.h / 2;
+        const w = this.dest.w;
+        const h = this.dest.h;
 
         ctx.save(); // Save canvas state
 
@@ -36,7 +40,7 @@ export class SpriteRendererComponent extends Component {
             }
             // Draw loaded image if ready, otherwise fallback to colored rect
             if (this.image.complete && this.image.naturalWidth > 0) {
-                ctx.drawImage(this.image, x, y, w, h);
+                ctx.drawImage(this.image, source.x, source.y, source.w, source.h, x, y, w, h);
             } else {
                 ctx.fillStyle = this.colorTint;
                 ctx.fillRect(x, y, w, h);
@@ -48,5 +52,22 @@ export class SpriteRendererComponent extends Component {
         }
 
         ctx.restore(); // Restore canvas state
+    }
+}
+
+export class SpritesheetRendererComponent extends SpriteRendererComponent {
+    constructor({ sprite = null, colorTint = '#ffffff', src = {x:0, y:0, w:40, h:40}, dest = {x:0, y:0, w:40, h:40}, spriteIndexX = 0, spriteIndexY = 0 } = {}) {
+        super({ sprite, colorTint, src, dest });
+        this.spriteIndexX = spriteIndexX;
+        this.spriteIndexY = spriteIndexY;
+    }
+
+    draw(ctx, transform) {
+        this.drawSpecific(ctx, transform, {
+            x: this.src.x + this.spriteIndexX * this.src.w,
+            y: this.src.y + this.spriteIndexY * this.src.h,
+            w: this.src.w,
+            h: this.src.h
+        });
     }
 }
