@@ -30,6 +30,16 @@ export class Entity {
     return this.constructor.getDisplayName();
   }
 
+  // Calls a method on all components that have it
+  call(method, ...args) {
+    for (const component of this.components) {
+      const fn = component[method];
+      if (typeof fn === 'function') {
+        fn.call(component, ...args);
+      }
+    }
+  }
+
   addComponent(component) {
     component.entity = this;
     this.components.push(component);

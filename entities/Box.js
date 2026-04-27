@@ -1,6 +1,7 @@
 import { BoxColliderComponent } from "../components/BoxColliderComponent.js";
 import { Entity } from "./Entity.js";
 import { SpritesheetRendererComponent } from "../components/SpritesheetRendererComponent.js";
+import { AberrateCubeComponent } from "../components/AberrateCubeComponent.js";
 
 export class Box extends Entity {
     static getName() {
@@ -18,8 +19,8 @@ export class Box extends Entity {
     static BOX_COLOR_GREEN = 3;
     static BOX_COLOR_TRIPLE = 4;
     static BOX_COLOR_REDBLUE = 5;
-    static BOX_COLOR_BLUEGREEN = 6;
-    static BOX_COLOR_REDGREEN = 7;
+    static BOX_COLOR_REDGREEN = 6;
+    static BOX_COLOR_BLUEGREEN = 7;
 
     static BOX_SPRITE_SHEET_PATH = 'sprites/cubes_sprite_sheet.png';
 
@@ -36,6 +37,7 @@ export class Box extends Entity {
         this.color = Box.BOX_COLOR_TRIPLE;
         this.addComponent(renderer);
         renderer.setSpriteIndex(this.color);
+        this.addComponent(new AberrateCubeComponent());
     }
 
     setCubeColor(color) {

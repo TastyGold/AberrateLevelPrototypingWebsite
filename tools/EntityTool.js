@@ -64,6 +64,11 @@ export class EntityTool extends Tool {
   }
 
   onKeyDown(state, key) {
+    if (key === 'f') {
+      for (const e of state.entities) {
+        e.call('aberrate');
+      }
+    }
   }
 
   onKeyUp(state, key) {
