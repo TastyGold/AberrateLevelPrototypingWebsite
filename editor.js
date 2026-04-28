@@ -156,7 +156,7 @@ function hidePlayModeUI() {
     palette.classList.remove('visible');
   }
 
-  window.dispatchEvent(new Event('resize'));
+  window.dispatchEvent(new Event('editorResize'));
 }
 
 function showPlayModeUI() {
@@ -165,7 +165,7 @@ function showPlayModeUI() {
     bottomBar.classList.remove('hidden');
   }
 
-  window.dispatchEvent(new Event('resize'));
+  window.dispatchEvent(new Event('editorResize'));
 }
 
 export function onEnterPlayMode() {

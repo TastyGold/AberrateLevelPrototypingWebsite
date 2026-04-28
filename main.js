@@ -7,14 +7,33 @@ let ctx = canvas.getContext('2d');
 let container = document.getElementById('canvasContainer');
 let lastTime = Date.now();
 
-// Resize canvas to fit container
-function resizeCanvas() {
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
+// Resize canvas to fit container.
+// preserveCenter=false is used for standard browser resize events.
+// preserveCenter=true is used when playmode UI changes visibility.
+function resizeCanvas(preserveCenter = false) {
+    const oldWidth = canvas.width;
+    const oldHeight = canvas.height;
+    const newWidth = container.clientWidth;
+    const newHeight = container.clientHeight;
+
+    // If preserving center, adjust camera position to keep view centered on same world point
+    if (preserveCenter && oldWidth && oldHeight) {
+        const widthDelta = newWidth - oldWidth;
+        const heightDelta = newHeight - oldHeight;
+        if (widthDelta || heightDelta) {
+            state.camera.x += widthDelta / (2 * state.camera.zoom);
+            state.camera.y += heightDelta / (2 * state.camera.zoom);
+        }
+    }
+
+    // Resize canvas to new dimensions
+    canvas.width = newWidth;
+    canvas.height = newHeight;
 }
 
-// Listen for window resize to adjust canvas size
-window.addEventListener('resize', resizeCanvas);
+// Normal browser resize should only resize the canvas.
+window.addEventListener('resize', () => resizeCanvas(false));
+window.addEventListener('editorResize', () => resizeCanvas(true));
 
 // Setup input handlers
 setupInputHandlers(canvas, state);
