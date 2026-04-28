@@ -1,4 +1,4 @@
-import { state } from './editor.js';
+import { state, onPlayModeUpdate } from './editor.js';
 import { draw } from './renderer.js';
 import { setupInputHandlers } from './input.js';
 
@@ -57,7 +57,7 @@ function loop() {
     let dt = Date.now() - lastTime;
     lastTime = Date.now();
 
-    // Update state (to be implemented)
+    onPlayModeUpdate(dt);
 
     // Render
     draw(ctx, state);

@@ -84,6 +84,12 @@ export class Entity {
   }
 
   getComponent(ComponentClass) {
+    if (typeof ComponentClass === 'string') {
+      const normalizedName = ComponentClass.toLowerCase();
+      return this.components.find(
+        (component) => component.constructor?.name?.toLowerCase() === normalizedName
+      ) || null;
+    }
     return this.components.find((component) => component instanceof ComponentClass) || null;
   }
 

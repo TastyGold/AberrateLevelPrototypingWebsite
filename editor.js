@@ -197,6 +197,13 @@ export function onExitPlayMode() {
   showPlayModeUI();
 }
 
+export function onPlayModeUpdate(dt) {
+  if (state.editorMode !== 'play') return;
+  state.playmodeEntities.forEach((entity) => {
+    entity.call('onPlayModeUpdate', dt);
+  });
+}
+
 /**
  * Transition to a new tool, calling lifecycle hooks.
  * ONLY place that lifecycle methods should EVER be called
