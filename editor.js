@@ -132,8 +132,18 @@ export const state = {
     visible: false,
   },
   entities: [], // List of placed entities in the level
+  editorMode: 'edit',
 };
 
+export function onEnterPlayMode() {
+  state.editorMode = 'play';
+  console.log('Entered play mode');
+}
+
+export function onExitPlayMode() {
+  state.editorMode = 'edit';
+  console.log('Exited play mode');
+}
 
 /**
  * Transition to a new tool, calling lifecycle hooks.

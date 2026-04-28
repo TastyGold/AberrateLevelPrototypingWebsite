@@ -3,7 +3,7 @@
  * Handles mouse movement, clicks, keyboard, and UI interactions
  */
 
-import { config, mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive, screenToWorld, onEntityHotkeyPressed, entityTypes } from './editor.js';
+import { config, mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive, screenToWorld, onEntityHotkeyPressed, entityTypes, onEnterPlayMode, onExitPlayMode, state } from './editor.js';
 
 /**
  * Generate entity buttons dynamically from entityTypes
@@ -245,11 +245,36 @@ export function setupInputHandlers(canvas, state) {
     updateToolButtonsUI();
   });
 
-    // Set up hitbox button toggle
+  // Set up hitbox button toggle
   const hitboxBtn = document.getElementById('hitboxBtn');
   hitboxBtn.innerHTML = config.showEntityCollision ? hitboxBtn.dataset.activetext : hitboxBtn.dataset.inactivetext;
   hitboxBtn.addEventListener('click', () => {
     config.showEntityCollision = !config.showEntityCollision;
     hitboxBtn.innerHTML = config.showEntityCollision ? hitboxBtn.dataset.activetext : hitboxBtn.dataset.inactivetext;
   });
+
+  // Set up play mode toggle button
+  const playModeBtn = document.getElementById('playModeBtn');
+  if (playModeBtn) {
+    const updatePlayModeButton = () => {
+      if (state.editorMode === 'play') {
+        playModeBtn.innerHTML = '<span class="play-icon">■</span><span class="play-text">Stop</span>';
+        playModeBtn.classList.add('playing');
+      } else {
+        playModeBtn.innerHTML = '<span class="play-icon">▶</span><span class="play-text">Play</span>';
+        playModeBtn.classList.remove('playing');
+      }
+    };
+
+    playModeBtn.addEventListener('click', () => {
+      if (state.editorMode === 'play') {
+        onExitPlayMode();
+      } else {
+        onEnterPlayMode();
+      }
+      updatePlayModeButton();
+    });
+
+    updatePlayModeButton();
+  }
 }

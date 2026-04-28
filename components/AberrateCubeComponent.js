@@ -1,7 +1,11 @@
 import { Component } from "./Component.js";
 import { Box } from "../entities/Box.js";
 
-export class AberrateCubeComponent extends Component {
+export class AberrateCubeComponent extends Component {    
+  constructor({ } = {}) {
+    super();
+  }
+
   aberrate() {
     if (this.entity instanceof Box) {
       // set cube color to current color + 8 mod 16
