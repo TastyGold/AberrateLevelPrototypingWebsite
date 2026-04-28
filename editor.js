@@ -11,7 +11,7 @@ export const config = {
   minZoom: 0.3,
   maxZoom: 5,
   // Alt key behavior
-  altModeKey: ' ',
+  altModeKey: 'c',
   altModeTool: 'camera',
   // Hotkey settings
   enableToolHotkeys: false,
@@ -22,6 +22,7 @@ export const config = {
       entity: 'e',
       room: 'r',
       erase: 't',
+      playmode: 'y',
     }
   },
   // Hitbox settings
@@ -36,7 +37,7 @@ import { RoomTool } from './tools/RoomTool.js';
 import { UniversalTool } from './tools/UniversalTool.js';
 import { EntityTool } from './tools/EntityTool.js';
 import { SelectTool } from './tools/SelectTool.js';
-
+import { PlaymodeTool } from './tools/PlaymodeTool.js';
 
 // Tool instances
 const tools = {
@@ -46,6 +47,7 @@ const tools = {
   entity: new EntityTool(),
   room: new RoomTool(),
   erase: null, // Placeholder for future EraseTool
+  playmode: new PlaymodeTool(),
 };
 
 // Import entity types
@@ -72,6 +74,7 @@ export const state = {
   // UI state
   selectedToolName: 'camera',
   previousToolName: 'camera',
+  playmodePreviousToolName: 'camera',
 
   // Mouse state (in local canvas coordinates)
   mouse: {
@@ -135,14 +138,54 @@ export const state = {
   editorMode: 'edit',
 };
 
+export function callMethodOnEntities(methodName, ...args) {
+  state.entities.forEach(entity => {
+    entity.call(methodName, ...args);
+  });
+}
+
+function hidePlayModeUI() {
+  const bottomBar = document.getElementById('bottomBar');
+  if (bottomBar) {
+    bottomBar.classList.add('hidden');
+  }
+
+  const palette = document.getElementById('entityPalette');
+  if (palette) {
+    palette.classList.add('hidden');
+    palette.classList.remove('visible');
+  }
+
+  window.dispatchEvent(new Event('resize'));
+}
+
+function showPlayModeUI() {
+  const bottomBar = document.getElementById('bottomBar');
+  if (bottomBar) {
+    bottomBar.classList.remove('hidden');
+  }
+
+  window.dispatchEvent(new Event('resize'));
+}
+
 export function onEnterPlayMode() {
-  state.editorMode = 'play';
+  if (state.editorMode === 'play') return;
   console.log('Entered play mode');
+  state.playmodePreviousToolName = state.selectedToolName;
+  state.editorMode = 'play';
+  setTool('playmode');
+  hidePlayModeUI();
+  callMethodOnEntities('onEnterPlayMode');
 }
 
 export function onExitPlayMode() {
-  state.editorMode = 'edit';
+  if (state.editorMode !== 'play') return;
   console.log('Exited play mode');
+  state.editorMode = 'edit';
+  const previousTool = state.playmodePreviousToolName || 'camera';
+  setTool(previousTool);
+  showPlayModeUI();
+  callMethodOnEntities('onExitPlayMode');
 }
 
 /**

@@ -15,7 +15,9 @@ export function draw(ctx, state) {
   applyCamera(ctx, state);
 
   // Draw grid (in world coordinates)
-  drawGrid(ctx, state);
+  if (state.editorMode !== 'play') {
+    drawGrid(ctx, state);
+  }
 
   if (state.creatingRoom) {
     // Draw room creation preview (if applicable)

@@ -151,12 +151,12 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 14px;
-  background-color: rgba(20, 20, 20, 0.92);
+  padding: 16px 20px;
+  background-color: rgba(20, 20, 20, 1);
   border: 1px solid #444;
   color: #e0e0e0;
   border-radius: 15px;
-  font-size: 14px;
+  font-size: 24px;
   font-weight: 600;
   cursor: pointer;
   z-index: 20;
@@ -164,18 +164,18 @@ body {
 }
 
 .play-mode-btn:hover {
-  background-color: rgba(40, 40, 40, 0.95);
+  background-color: rgba(40, 40, 40, 1);
   border-color: #64c8ff;
 }
 
 .play-mode-btn.playing {
-  background-color: rgba(100, 200, 255, 0.16);
+  background-color: rgb(25, 52, 66);
   border-color: #64c8ff;
   color: #64c8ff;
 }
 
 .play-mode-btn .play-icon {
-  font-size: 14px;
+  font-size: 24px;
   line-height: 1;
 }
 
@@ -210,6 +210,10 @@ body {
   opacity: 0;
   transform: translateY(24px);
   pointer-events: none;
+}
+
+#bottomBar.hidden {
+  display: none;
 }
 
 #entityPalette::-webkit-scrollbar {

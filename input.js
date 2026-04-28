@@ -258,10 +258,10 @@ export function setupInputHandlers(canvas, state) {
   if (playModeBtn) {
     const updatePlayModeButton = () => {
       if (state.editorMode === 'play') {
-        playModeBtn.innerHTML = '<span class="play-icon">■</span><span class="play-text">Stop</span>';
+        playModeBtn.innerHTML = '<span class="play-icon">■ Stop</span>';
         playModeBtn.classList.add('playing');
       } else {
-        playModeBtn.innerHTML = '<span class="play-icon">▶</span><span class="play-text">Play</span>';
+        playModeBtn.innerHTML = '<span class="play-icon">▶ Play</span>';
         playModeBtn.classList.remove('playing');
       }
     };
@@ -273,6 +273,7 @@ export function setupInputHandlers(canvas, state) {
         onEnterPlayMode();
       }
       updatePlayModeButton();
+      updateToolButtonsUI();
     });
 
     updatePlayModeButton();

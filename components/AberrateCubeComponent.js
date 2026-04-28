@@ -14,4 +14,12 @@ export class AberrateCubeComponent extends Component {
       box.setCubeColor(newColor);
     }
   }
+
+  onEnterPlayMode() {
+    this.aberrate();
+  }
+
+  onExitPlayMode() {
+    this.aberrate();
+  }
 }
