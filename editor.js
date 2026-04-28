@@ -135,7 +135,10 @@ export const state = {
     visible: false,
   },
   entities: [], // List of placed entities in the level
+
+  // Playmode
   editorMode: 'edit',
+  playmodeEntities: [], // Playmode clones of entities for runtime simulation
 };
 
 export function callMethodOnEntities(methodName, ...args) {

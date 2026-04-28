@@ -17,7 +17,7 @@ export class PlaymodeTool extends Tool {
   }
 
   onMouseDown(state, button) {
-
+    this.findEntityAtMouse(state);
   }
 
   onMouseMove(state) {

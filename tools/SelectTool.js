@@ -90,19 +90,6 @@ export class SelectTool extends Tool {
     // TODO: Implement keyboard shortcuts for select tool
   }
 
-  findEntityAtMouse(state) { 
-    for (const entity of state.entities) {
-      const transform = entity.getComponent(TransformComponent);
-      const collider = entity.getComponent(BoxColliderComponent);
-      if (transform && collider) {
-        if (collider.pointIntersect(state.mouse.worldX, state.mouse.worldY)) {
-          return entity;
-        }
-      }
-    }
-    return null;
-  }
-
   addHighlightedEntitiesToSelection(state) {
     for (const entity of state.highlightedEntities) {
       this.addSelectableToSelection(state, entity);

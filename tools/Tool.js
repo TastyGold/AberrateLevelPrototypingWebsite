@@ -1,3 +1,6 @@
+import { TransformComponent } from '../components/TransformComponent.js';
+import { BoxColliderComponent } from '../components/BoxColliderComponent.js';
+
 /**
  * Base Tool class for the strategy pattern
  * Defines the interface for tool behavior
@@ -36,6 +39,22 @@ export class Tool {
    * @param {string} key - The key that was released
    */
   onKeyUp(state, key) {}
+
+  /**
+   * Find the first entity under the mouse cursor.
+   * @param {Object} state - The editor state
+   * @returns {Object|null} The entity under the mouse, or null.
+   */
+  findEntityAtMouse(state, list = state.entities) {
+    for (const entity of list) {
+      const transform = entity.getComponent(TransformComponent);
+      const collider = entity.getComponent(BoxColliderComponent);
+      if (transform && collider && collider.pointIntersect(state.mouse.worldX, state.mouse.worldY)) {
+        return entity;
+      }
+    }
+    return null;
+  }
 
   /**
    * Called when this tool becomes active
