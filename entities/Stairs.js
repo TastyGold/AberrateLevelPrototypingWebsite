@@ -13,8 +13,8 @@ export class Stairs extends Entity {
         return 'Stairs';
     }
 
-    constructor() {
-        super();
+    constructor(options = {}) {
+        super(options);
         this.addComponent(new BoxColliderComponent({ width: 120, height: 80 }));
         this.addComponent(new SpriteRendererComponent({ 
             colorTint: '#55ccff',

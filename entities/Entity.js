@@ -5,10 +5,12 @@ import { TransformComponent } from "../components/TransformComponent.js";
  * Base entity class for all spawned editor entities.
  */
 export class Entity {
-  constructor() {
+  constructor({ skipDefaults = false } = {}) {
     this.components = [];
-    this.addComponent(new TransformComponent());
-    this.addComponent(new EditorIntegrationComponent());
+    if (!skipDefaults) {
+      this.addComponent(new TransformComponent());
+      this.addComponent(new EditorIntegrationComponent());
+    }
     this.id = Entity.nextEntityID++;
   }
 
@@ -44,6 +46,41 @@ export class Entity {
     component.entity = this;
     this.components.push(component);
     return component;
+  }
+
+  cloneValue(value) {
+    if (Array.isArray(value)) {
+      return value.map((item) => this.cloneValue(item));
+    }
+    if (value && typeof value === 'object' && value.constructor === Object) {
+      const copy = {};
+      for (const key in value) {
+        if (Object.prototype.hasOwnProperty.call(value, key)) {
+          copy[key] = this.cloneValue(value[key]);
+        }
+      }
+      return copy;
+    }
+    return value;
+  }
+
+  clone() {
+    const newEntity = Object.create(Object.getPrototypeOf(this));
+    newEntity.components = [];
+    newEntity.id = Entity.nextEntityID++;
+
+    for (const component of this.components) {
+      newEntity.addComponent(component.clone());
+    }
+
+    for (const key of Object.keys(this)) {
+      if (key === 'components' || key === 'id') {
+        continue;
+      }
+      newEntity[key] = this.cloneValue(this[key]);
+    }
+
+    return newEntity;
   }
 
   getComponent(ComponentClass) {

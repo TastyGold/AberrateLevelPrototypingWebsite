@@ -13,6 +13,12 @@ export class SpriteRendererComponent extends Component {
         this.dest = dest;
     }
 
+    clone() {
+        const copy = super.clone();
+        copy.image = null;
+        return copy;
+    }
+
     draw(ctx, transform) {
         this.drawSpecific(ctx, transform, this.src);
     }

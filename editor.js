@@ -141,8 +141,12 @@ export const state = {
   playmodeEntities: [], // Playmode clones of entities for runtime simulation
 };
 
+export function getActiveEntities() {
+  return state.editorMode === 'play' ? state.playmodeEntities : state.entities;
+}
+
 export function callMethodOnEntities(methodName, ...args) {
-  state.entities.forEach(entity => {
+  getActiveEntities().forEach(entity => {
     entity.call(methodName, ...args);
   });
 }
@@ -175,6 +179,7 @@ export function onEnterPlayMode() {
   if (state.editorMode === 'play') return;
   console.log('Entered play mode');
   state.playmodePreviousToolName = state.selectedToolName;
+  state.playmodeEntities = state.entities.map((entity) => entity.clone());
   state.editorMode = 'play';
   setTool('playmode');
   hidePlayModeUI();
@@ -184,11 +189,12 @@ export function onEnterPlayMode() {
 export function onExitPlayMode() {
   if (state.editorMode !== 'play') return;
   console.log('Exited play mode');
+  callMethodOnEntities('onExitPlayMode');
+  state.playmodeEntities = [];
   state.editorMode = 'edit';
   const previousTool = state.playmodePreviousToolName || 'camera';
   setTool(previousTool);
   showPlayModeUI();
-  callMethodOnEntities('onExitPlayMode');
 }
 
 /**

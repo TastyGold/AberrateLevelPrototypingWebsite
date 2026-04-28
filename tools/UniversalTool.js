@@ -52,6 +52,9 @@ export class UniversalTool extends Tool {
 		else if (key.toLowerCase() === 'shift') {
 			state.input.isShiftDown = true;
 		}
+		else if (key.toLowerCase() === ';') {
+			console.log('Current state:', state);
+		}
 		// handle tool hotkeys regardless of config enable
 		for (const [toolName, hotkey] of Object.entries(config.hotkeys.tools)) {
 			if (key.toLowerCase() === hotkey) {

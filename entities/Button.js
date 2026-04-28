@@ -13,8 +13,8 @@ export class Button extends Entity {
         return 'Button';
     }
 
-    constructor() {
-        super();
+    constructor(options = {}) {
+        super(options);
         this.addComponent(new BoxColliderComponent({ width: 60, height: 60 }));
         this.addComponent(new SpriteRendererComponent({
             colorTint: '#ff5555',

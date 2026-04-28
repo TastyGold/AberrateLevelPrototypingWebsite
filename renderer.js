@@ -1,4 +1,4 @@
-import { config, screenToWorld } from './editor.js';
+import { config, screenToWorld, getActiveEntities } from './editor.js';
 import { SpriteRendererComponent } from "./components/SpriteRendererComponent.js";
 import { TransformComponent } from "./components/TransformComponent.js";
 import { BoxColliderComponent } from './components/BoxColliderComponent.js';
@@ -185,7 +185,8 @@ function drawSelectTool(ctx, state) {
 }
 
 function drawEntites(ctx, state) {
-  state.entities.forEach(entity => {
+  const entities = getActiveEntities();
+  entities.forEach(entity => {
     const transform = entity.getComponent(TransformComponent);
     const sprite = entity.getComponent(SpriteRendererComponent);
     if (sprite && transform) {
@@ -202,7 +203,8 @@ function drawEntites(ctx, state) {
 }
 
 function drawEntityCollisions(ctx, state) {
-  state.entities.forEach(entity => {
+  const entities = getActiveEntities();
+  entities.forEach(entity => {
     drawEntityOutline(ctx, state, entity, 'rgba(255, 255, 0, 0.8)','rgba(0, 0, 0, 0)', 1, 0);
   });
 }
