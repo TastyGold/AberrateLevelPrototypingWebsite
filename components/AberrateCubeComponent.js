@@ -19,9 +19,9 @@ export class AberrateCubeComponent extends Component {
   static ABERRATED_ID_OFFSET = 8;
 
   aberrate(state) {
-
+    // only handle aberration logic if is parent or can spawn children
     if (this.childComponents.length < 1 && this.colorId < 4) {
-      return;
+      return; 
     }
 
     if (this.aberrated) {
@@ -32,29 +32,44 @@ export class AberrateCubeComponent extends Component {
       console.log(`AberrateCubeComponent: Aberrating cube color ${this.colorId} and its children`);
       return;
     }
+    if (this.canDefuse()) {
+      this.defuse(state);
+      console.log(`AberrateCubeComponent: Defusing cube color ${this.colorId} into its components`);
+    }
+    else {
+      this.toggleParentChildAberration();
+      console.log(`AberrateCubeComponent: No defuse recipe for cube color ${this.colorId}, toggling aberration`);
+    }
+    
+  }
 
+  toggleParentChildAberration() {
+    this.setAberrated(true);
+    this.childComponents.forEach(child => {
+      child.setAberrated(false);
+    });
+  }
+
+  canDefuse() {
+    return AberrateCubeRecipes.defuseRecipes.some(recipe => recipe.input === this.colorId);
+  }
+
+  defuse(state) {
     const defuseRecipe = AberrateCubeRecipes.defuseRecipes.find(recipe => recipe.input === this.colorId);
     if (defuseRecipe) {
       console.log(`AberrateCubeComponent: Defusing cube color ${this.colorId} into ${defuseRecipe.output}`);
 
-      let offsetX = 50;
+      let offsetX = -50;
       defuseRecipe.output.forEach(colorId => {
         this.spawnChild(state, colorId, offsetX, 0);
         offsetX += 50;
+        if (offsetX === 0) offsetX += 50; // skip spawning directly on top of parent
       });
       this.setColorId(AberrateCubeComponent.ABERRATE_WHITE);
       this.toggleAberrated();
       this.updateBoxSpritesheetRenderer();
       return;
     }
-    else {
-      this.setAberrated(true);
-      this.childComponents.forEach(child => {
-        child.setAberrated(false);
-      });
-      console.log(`AberrateCubeComponent: Aberrating cube color ${this.colorId} and un-aberrating its children`);
-    }
-
   }
 
   spawnChild(state, colorId, offsetX, offsetY) {
@@ -103,7 +118,7 @@ export class AberrateCubeComponent extends Component {
   onPlayModeUpdate(dt) {
     const transform = this.entity.getComponent(TransformComponent);
     if (transform && this.colorId % 4 === 0) {
-      transform.y += dt * 0.05; // example update code
+      //transform.y += dt * 0.05; // example update code
     }
   }
 

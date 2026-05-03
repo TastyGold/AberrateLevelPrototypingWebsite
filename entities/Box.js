@@ -24,7 +24,7 @@ export class Box extends Entity {
 
     static BOX_SPRITE_SHEET_PATH = 'sprites/cubes_sprite_sheet.png';
 
-    constructor({options = {}, color = Box.BOX_COLOR_REDBLUE} = {}) {
+    constructor({options = {}, color = Box.BOX_COLOR_TRIPLE} = {}) {
         super(options);
         this.addComponent(new BoxColliderComponent({ width: 40, height: 45 }));
         const renderer = new SpritesheetRendererComponent({ 
