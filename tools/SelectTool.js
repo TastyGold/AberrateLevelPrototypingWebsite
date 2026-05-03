@@ -41,7 +41,6 @@ export class SelectTool extends Tool {
   }
 
   onMouseMove(state) {
-
     // handle drag move of selected entities
     if (state.dragMoving) {
       state.selectedEntites.forEach(entity => {

@@ -24,7 +24,7 @@ export function draw(ctx, state) {
     // Draw room creation preview (if applicable)
     drawRoomTool(ctx, state);
   }
-  else if (!state.placingEntity && state.selectedToolName !== 'select') {
+  else if (!state.placingEntity && state.selectedToolName !== 'select' && state.editorMode === 'edit') {
     // Draw highlighted tile (in world coordinates)
     drawHighlightedTile(ctx, state);
   }
@@ -44,7 +44,7 @@ export function draw(ctx, state) {
   drawDebugCubeConnections(ctx, state);
   drawDebugCubeParentConnections(ctx, state);
 
-  if (state.selectedToolName === 'select') {
+  if (state.selectedToolName === 'select' || state.editorMode === 'play') {
     // Draw selection outlines
     drawSelectionOutline(ctx, state);
     // Draw selection highlights

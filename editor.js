@@ -139,6 +139,8 @@ export const state = {
   // Playmode
   editorMode: 'edit',
   playmodeEntities: [], // Playmode clones of entities for runtime simulation
+  playmodeDraggingEntity: null, // Which entity (if any) is being dragged in playmode
+  playmodeDraggingOverlaps: [], // which entities the dragging entity is overlapping
 
   // functions to add an entity to this state
   addEntityToState(entity) {
@@ -146,6 +148,12 @@ export const state = {
   },
   addPlaymodeEntityToState(entity) {
     this.playmodeEntities.push(entity);
+  },
+  removeEntityFromState(entity) {
+    this.entities = this.entities.filter(e => e !== entity);
+  },
+  removePlaymodeEntityFromState(entity) {
+    this.playmodeEntities = this.playmodeEntities.filter(e => e !== entity);
   },
 };
 

@@ -47,6 +47,58 @@ export class AberrateCubeComponent extends Component {
     });
   }
 
+  canFuseWith(otherColorId) {
+    return AberrateCubeRecipes.fuseRecipes.some(recipe => {
+      return (recipe.input[0] === this.colorId && recipe.input[1] === otherBox.colorId) ||
+             (recipe.input[1] === this.colorId && recipe.input[0] === otherBox.colorId);
+            });
+  }
+
+  tryFuseWith(state, otherBox) {
+    console.log(`AberrateCubeComponent: trying to fuse ${this.colorId} with color ${otherBox.colorId}`);
+    const recipe = AberrateCubeRecipes.fuseRecipes.find(recipe => {
+      return (recipe.input[0] === this.colorId && recipe.input[1] === otherBox.colorId) ||
+             (recipe.input[1] === this.colorId && recipe.input[0] === otherBox.colorId);
+    });
+
+    if (recipe) {
+      console.log(`AberrateCubeComponent: Fusing cube color ${this.colorId} with color ${otherBox.colorId} to create color ${recipe.output}`);
+      // set this box to the fused color
+      this.setColorId(recipe.output);
+      const parent = this.parentComponent;
+      const otherParent = otherBox.parentComponent;
+      // detatch parent children and delete parent
+      if (otherParent !== null && otherParent !== parent) {
+        otherParent.detachFromParent();
+        otherParent.detachChildren();
+        state.removePlaymodeEntityFromState(otherParent.entity);
+      }
+      if (parent !== null) {
+        parent.detachFromParent();
+        parent.detachChildren();
+        state.removePlaymodeEntityFromState(parent.entity);
+      }
+      // remove the other box from the game state
+      state.removePlaymodeEntityFromState(otherBox.entity);
+      return true;
+    }
+    return false;
+  }
+
+  detachChildren() {
+    this.childComponents.forEach(child => {
+      child.parentComponent = null;
+    });
+    this.childComponents = [];
+  }
+
+  detachFromParent() {
+    if (this.parentComponent) {
+      this.parentComponent.childComponents = this.parentComponent.childComponents.filter(child => child !== this);
+      this.parentComponent = null;
+    }
+  }
+
   canDefuse() {
     return AberrateCubeRecipes.defuseRecipes.some(recipe => recipe.input === this.colorId);
   }
@@ -115,7 +167,7 @@ export class AberrateCubeComponent extends Component {
   onPlayModeUpdate(dt) {
     const transform = this.entity.getComponent(TransformComponent);
     if (transform && this.colorId % 4 === 0) {
-      transform.y += dt * 0.05; // example update code
+      //transform.y += dt * 0.05; // example update code
     }
   }
 

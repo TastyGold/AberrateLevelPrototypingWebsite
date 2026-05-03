@@ -18,7 +18,7 @@ export class AberrateCubeRecipes {
     { input: [1, 7], output: 4 },
     { input: [2, 6], output: 4 },
     { input: [3, 5], output: 4 },
-    { input: [1, 2, 3], output: 4 }
+    //{ input: [1, 2, 3], output: 4 }
   ];
 
   static defuseRecipes = [
