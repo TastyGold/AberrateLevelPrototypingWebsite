@@ -29,6 +29,8 @@ export const config = {
   showEntityCollision: false,
   // Colors
   collisionOutlineColor: 'rgba(255, 255, 0, 0.8)',
+  // Playmode
+  canDragAberratedCubes: false
 };
 
 // Import tools

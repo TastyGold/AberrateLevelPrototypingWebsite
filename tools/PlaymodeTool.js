@@ -20,7 +20,13 @@ export class PlaymodeTool extends Tool {
   }
 
   onMouseDown(state, button) {
-    let entityAtMouse = this.findEntityAtMouse(state, state.playmodeEntities);
+    let entityAtMouse = this.findEntityAtMouse(state, state.playmodeEntities.filter(e => {
+      const aberrateComponent = e.getComponent(AberrateCubeComponent);
+      if (aberrateComponent) {
+        return aberrateComponent.aberrated === false;
+      }
+      return false;
+    }));
     if (entityAtMouse) {
       state.playmodeDraggingEntity = entityAtMouse;
       state.highlightedEntities = [entityAtMouse];
@@ -79,6 +85,7 @@ export class PlaymodeTool extends Tool {
         if (entity instanceof Box) {
           const aberrateComponent = entity.getComponent?.(AberrateCubeComponent);
           if (aberrateComponent) {
+            if (aberrateComponent.aberrated) return; // don't allow fusing with aberrated cubes
             otherBoxComponents.push(aberrateComponent);
           }
         }
@@ -87,6 +94,7 @@ export class PlaymodeTool extends Tool {
       // attempt to fuse held box with boxes being dropped on
       if (otherBoxComponents.length > 0) {
         otherBoxComponents.forEach(b => {
+          // will propagate fusion to all connected boxes, so only need to call on one of them
           console.log(`Attempting to fuse box with color ${box.color} with box with color ${b.colorId}`);
           box.tryFuseWith(state, b);
         })

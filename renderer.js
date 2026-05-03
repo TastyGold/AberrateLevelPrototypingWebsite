@@ -41,8 +41,8 @@ export function draw(ctx, state) {
 
   // Draw entities
   drawEntites(ctx, state);
-  drawDebugCubeConnections(ctx, state);
-  drawDebugCubeParentConnections(ctx, state);
+  //drawDebugCubeConnections(ctx, state);
+  //drawDebugCubeParentConnections(ctx, state);
 
   if (state.selectedToolName === 'select' || state.editorMode === 'play') {
     // Draw selection outlines
