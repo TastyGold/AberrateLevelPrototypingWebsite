@@ -1,5 +1,6 @@
 import { BoxColliderComponent } from '../components/BoxColliderComponent.js';
 import { TransformComponent } from '../components/TransformComponent.js';
+import { callMethodOnEntities } from '../editor.js';
 import { Tool } from './Tool.js';
 
 
@@ -28,6 +29,9 @@ export class PlaymodeTool extends Tool {
   }
 
   onKeyDown(state, key) {
+    if (key === 'f') {
+      callMethodOnEntities('aberrate', state);
+    }
   }
 
   onKeyUp(state, key) {

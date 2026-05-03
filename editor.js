@@ -139,6 +139,14 @@ export const state = {
   // Playmode
   editorMode: 'edit',
   playmodeEntities: [], // Playmode clones of entities for runtime simulation
+
+  // functions to add an entity to this state
+  addEntityToState(entity) {
+    this.entities.push(entity);
+  },
+  addPlaymodeEntityToState(entity) {
+    this.playmodeEntities.push(entity);
+  },
 };
 
 export function getActiveEntities() {
@@ -146,7 +154,8 @@ export function getActiveEntities() {
 }
 
 export function callMethodOnEntities(methodName, ...args) {
-  getActiveEntities().forEach(entity => {
+  const activeEntities = [...getActiveEntities()];
+  activeEntities.forEach(entity => {
     entity.call(methodName, ...args);
   });
 }

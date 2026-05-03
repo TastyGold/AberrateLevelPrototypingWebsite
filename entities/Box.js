@@ -24,7 +24,7 @@ export class Box extends Entity {
 
     static BOX_SPRITE_SHEET_PATH = 'sprites/cubes_sprite_sheet.png';
 
-    constructor(options = {}) {
+    constructor({options = {}, color = Box.BOX_COLOR_REDBLUE} = {}) {
         super(options);
         this.addComponent(new BoxColliderComponent({ width: 40, height: 45 }));
         const renderer = new SpritesheetRendererComponent({ 
@@ -34,15 +34,17 @@ export class Box extends Entity {
             dest: { x: 0, y: 0, w: 50, h: 50 },
             sheetColumns: 4,
         });
-        this.color = Box.BOX_COLOR_TRIPLE;
+        this.color = color;
         this.addComponent(renderer);
         renderer.setSpriteIndex(this.color);
-        this.addComponent(new AberrateCubeComponent());
+        console.log(`Box: Created box with initial color ${this.color}`);
+        this.addComponent(new AberrateCubeComponent({ colorId: color }));
     }
 
     setCubeColor(color) {
         if (this.color === color) return;
         this.color = color;
+        console.log(`Box: Setting cube color to ${color}`);
         this.getComponent(SpritesheetRendererComponent).setSpriteIndex(this.color);
         return;
     }

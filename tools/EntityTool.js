@@ -1,6 +1,7 @@
 import { Tool } from './Tool.js';
 import { entityTypes } from "../editor.js";
 import { TransformComponent } from "../components/TransformComponent.js";
+import { Box } from "../entities/Box.js";
 
 export class EntityTool extends Tool {
   onEnter(state) {
@@ -39,7 +40,7 @@ export class EntityTool extends Tool {
         return;
       }
       const entity = new EntityClass();
-      entity.setCubeColor?.(Math.floor(Math.random() * 16));
+      //entity.setCubeColor?.(Math.floor(Math.random() * 16));
       const transform = entity.getComponent(TransformComponent);
       if (transform) {
         transform.x = state.mouse.worldX;
@@ -64,11 +65,6 @@ export class EntityTool extends Tool {
   }
 
   onKeyDown(state, key) {
-    if (key === 'f') {
-      for (const e of state.entities) {
-        e.call('aberrate');
-      }
-    }
   }
 
   onKeyUp(state, key) {

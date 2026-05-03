@@ -2,6 +2,7 @@ import { config, screenToWorld, getActiveEntities } from './editor.js';
 import { SpriteRendererComponent } from "./components/SpriteRendererComponent.js";
 import { TransformComponent } from "./components/TransformComponent.js";
 import { BoxColliderComponent } from './components/BoxColliderComponent.js';
+import { AberrateCubeComponent } from './components/AberrateCubeComponent.js';
 
 export function draw(ctx, state) {
   // Clear canvas
@@ -40,6 +41,7 @@ export function draw(ctx, state) {
 
   // Draw entities
   drawEntites(ctx, state);
+  drawDebugCubeConnections(ctx, state);
 
   if (state.selectedToolName === 'select') {
     // Draw selection outlines
@@ -206,6 +208,23 @@ function drawEntityCollisions(ctx, state) {
   const entities = getActiveEntities();
   entities.forEach(entity => {
     drawEntityOutline(ctx, state, entity, 'rgba(255, 255, 0, 0.8)','rgba(0, 0, 0, 0)', 1, 0);
+  });
+}
+
+function drawDebugCubeConnections(ctx, state) {
+  const entities = getActiveEntities();
+  entities.forEach(entity => {
+    const aberrateComponent = entity.getComponent(AberrateCubeComponent);
+    const transform = entity.getComponent(TransformComponent);
+    if (aberrateComponent && transform) {
+      aberrateComponent.childComponents.forEach(child => {
+        let childEntity = child.entity;
+        let childTransform = childEntity.getComponent(TransformComponent);
+        if (childTransform) {
+          drawLine(ctx, transform.x, transform.y, childTransform.x, childTransform.y, 'rgba(255, 255, 255, 1)', 1);
+        }
+      });
+    }
   });
 }
 
