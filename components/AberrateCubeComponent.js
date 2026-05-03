@@ -9,6 +9,7 @@ export class AberrateCubeComponent extends Component {
     this.colorId = colorId;
     this.childComponents = [];
     this.aberrated = false;
+    this.parentComponent = null;
   }
   
   static ABERRATE_WHITE = 0;
@@ -25,28 +26,24 @@ export class AberrateCubeComponent extends Component {
     }
 
     if (this.aberrated) {
-      this.setAberrated(false);
-      this.childComponents.forEach(child => {
-        child.setAberrated(true);
-      });
+      this.toggleParentChildAberration(false); // un-aberrate parent and children
       console.log(`AberrateCubeComponent: Aberrating cube color ${this.colorId} and its children`);
-      return;
     }
-    if (this.canDefuse()) {
+    else if (this.canDefuse()) {
       this.defuse(state);
       console.log(`AberrateCubeComponent: Defusing cube color ${this.colorId} into its components`);
     }
     else {
-      this.toggleParentChildAberration();
+      this.toggleParentChildAberration(true); // aberrate parent and children
       console.log(`AberrateCubeComponent: No defuse recipe for cube color ${this.colorId}, toggling aberration`);
     }
     
   }
 
-  toggleParentChildAberration() {
-    this.setAberrated(true);
+  toggleParentChildAberration(aberrated = true) {
+    this.setAberrated(aberrated);
     this.childComponents.forEach(child => {
-      child.setAberrated(false);
+      child.setAberrated(!aberrated);
     });
   }
 
@@ -81,6 +78,7 @@ export class AberrateCubeComponent extends Component {
       childTransform.y = parentTransform.y + offsetY;
       state.addPlaymodeEntityToState(child);
       const childAberrateComponent = child.getComponent(AberrateCubeComponent);
+      childAberrateComponent.parentComponent = this;
       this.childComponents.push(childAberrateComponent);
       console.log(`AberrateCubeComponent: Spawned child cube with color ${colorId} at offset (${offsetX}, ${offsetY})`);
     }
@@ -111,14 +109,13 @@ export class AberrateCubeComponent extends Component {
   }
 
   onEnterPlayMode() {
-    //this.aberrate();
     console.log(`AberrateCubeComponent: Entered play mode, this box color is ${this.colorId}`);
   }
 
   onPlayModeUpdate(dt) {
     const transform = this.entity.getComponent(TransformComponent);
     if (transform && this.colorId % 4 === 0) {
-      //transform.y += dt * 0.05; // example update code
+      transform.y += dt * 0.05; // example update code
     }
   }
 

@@ -42,6 +42,7 @@ export function draw(ctx, state) {
   // Draw entities
   drawEntites(ctx, state);
   drawDebugCubeConnections(ctx, state);
+  drawDebugCubeParentConnections(ctx, state);
 
   if (state.selectedToolName === 'select') {
     // Draw selection outlines
@@ -221,9 +222,27 @@ function drawDebugCubeConnections(ctx, state) {
         let childEntity = child.entity;
         let childTransform = childEntity.getComponent(TransformComponent);
         if (childTransform) {
-          drawLine(ctx, transform.x, transform.y, childTransform.x, childTransform.y, 'rgba(255, 255, 255, 1)', 1);
+          drawLine(ctx, transform.x, transform.y, childTransform.x, childTransform.y, 'rgba(255, 255, 255, 1)', 2);
         }
       });
+    }
+  });
+}
+
+function drawDebugCubeParentConnections(ctx, state) {  
+  const entities = getActiveEntities();
+  entities.forEach(entity => {
+    const aberrateComponent = entity.getComponent(AberrateCubeComponent);
+    const transform = entity.getComponent(TransformComponent);
+    if (aberrateComponent && transform) {
+      const parent = aberrateComponent.parentComponent;
+      if (parent && parent.entity) {
+        const parentTransform = parent.entity.getComponent(TransformComponent);
+        if (parentTransform) {
+          const lineOffset = 3;
+          drawLine(ctx, transform.x + lineOffset, transform.y + lineOffset, parentTransform.x + lineOffset, parentTransform.y + lineOffset, 'rgb(248, 50, 255)', 2);
+        }
+      }
     }
   });
 }

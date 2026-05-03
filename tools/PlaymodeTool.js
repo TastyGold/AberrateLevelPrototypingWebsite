@@ -29,7 +29,7 @@ export class PlaymodeTool extends Tool {
   }
 
   onKeyDown(state, key) {
-    if (key === 'f') {
+    if (key === 'r') {
       callMethodOnEntities('aberrate', state);
     }
   }

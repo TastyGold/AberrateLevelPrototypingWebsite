@@ -45,7 +45,7 @@ export class UniversalTool extends Tool {
 		if (key.toLowerCase() === config.altModeKey) {
 			state.input.isAltDown = true;
 			// Handle Alt key specially for temporary camera override
-			if (!state.isAltOverride && state.selectedTool !== 'camera') {
+			if (!state.isAltOverride && state.selectedTool !== 'camera' && state.editorMode === 'edit') {
 				activateAltOverride();
 			}
 		}
@@ -55,15 +55,17 @@ export class UniversalTool extends Tool {
 		else if (key.toLowerCase() === ';') {
 			console.log('Current state:', state);
 		}
-		// handle tool hotkeys regardless of config enable
-		for (const [toolName, hotkey] of Object.entries(config.hotkeys.tools)) {
-			if (key.toLowerCase() === hotkey) {
-				setTool(toolName);
-				return; // stop checking other hotkeys after a match is found;
+		if (state.editorMode === 'edit') {
+			// handle tool hotkeys regardless of config enable
+			for (const [toolName, hotkey] of Object.entries(config.hotkeys.tools)) {
+				if (key.toLowerCase() === hotkey) {
+					setTool(toolName);
+					return; // stop checking other hotkeys after a match is found;
+				}
 			}
+			// handle entity hotkeys, update selected entity type and switch to entity tool
+			onEntityHotkeyPressed(key);
 		}
-		// handle entity hotkeys, update selected entity type and switch to entity tool
-		onEntityHotkeyPressed(key);
 	}
 
 	onKeyUp(state, key) {
