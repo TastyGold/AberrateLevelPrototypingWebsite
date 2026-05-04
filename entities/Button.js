@@ -17,8 +17,9 @@ export class Button extends Entity {
         super(options);
         this.addComponent(new BoxColliderComponent({ width: 60, height: 60 }));
         this.addComponent(new SpriteRendererComponent({
+            sprite: 'sprites/cubebutton.png',
             colorTint: '#ff5555',
-            src: { x: 0, y: 0, w: 40, h: 40 },
+            src: { x: 0, y: 0, w: 208, h: 208 },
             dest: { x: 0, y: 0, w: 60, h: 60 }
         }));
     }
