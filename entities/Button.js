@@ -23,5 +23,6 @@ export class Button extends Entity {
             src: { x: 0, y: 0, w: 208, h: 208 },
             dest: { x: 0, y: 0, w: 60, h: 60 }
         }));
+        this.addComponent(new SignalReceiverComponent());
     }
 }

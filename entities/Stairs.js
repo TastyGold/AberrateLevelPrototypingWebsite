@@ -22,6 +22,7 @@ export class Stairs extends Entity {
             src: { x: 0, y: 0, w: 40, h: 40 },
             dest: { x: 0, y: 0, w: 120, h: 80 }
         }));
+        this.addComponent(new SignalReceiverComponent());
     }
 
     onReceiverReqsMet() {
