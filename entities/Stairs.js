@@ -2,6 +2,7 @@ import { BoxColliderComponent } from "../components/BoxColliderComponent.js";
 import { Entity } from "./Entity.js";
 import { SpriteRendererComponent } from "../components/SpriteRendererComponent.js";
 import { TransformComponent } from "../components/TransformComponent.js";
+import { SignalReceiverComponent } from "../components/SignalReceiverComponent.js";
 
 
 export class Stairs extends Entity {
@@ -21,5 +22,9 @@ export class Stairs extends Entity {
             src: { x: 0, y: 0, w: 40, h: 40 },
             dest: { x: 0, y: 0, w: 120, h: 80 }
         }));
+    }
+
+    onReceiverReqsMet() {
+        console.log('hi');
     }
 }

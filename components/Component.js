@@ -33,5 +33,3 @@ export class Component {
         return copy;
     }
 }
-
-

@@ -2,6 +2,7 @@ import { BoxColliderComponent } from "../components/BoxColliderComponent.js";
 import { Entity } from "./Entity.js";
 import { SpriteRendererComponent } from "../components/SpriteRendererComponent.js";
 import { TransformComponent } from "../components/TransformComponent.js";
+import { SignalSenderComponent } from "../components/SignalSenderComponent.js";
 
 
 export class Button extends Entity {
