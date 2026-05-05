@@ -3,6 +3,8 @@ import { SpriteRendererComponent } from "./components/SpriteRendererComponent.js
 import { TransformComponent } from "./components/TransformComponent.js";
 import { BoxColliderComponent } from './components/BoxColliderComponent.js';
 import { AberrateCubeComponent } from './components/AberrateCubeComponent.js';
+import { SignalSenderComponent } from './components/SignalSenderComponent.js';
+import { SignalReceiverComponent } from './components/SignalReceiverComponent.js';
 
 export function draw(ctx, state) {
   // Clear canvas
@@ -39,10 +41,18 @@ export function draw(ctx, state) {
     drawSelectTool(ctx, state);
   }
 
+  if (state.editorMode === 'play') {
+    drawSignalConnections(ctx, state);
+  }
+
   // Draw entities
   drawEntites(ctx, state);
   //drawDebugCubeConnections(ctx, state);
   //drawDebugCubeParentConnections(ctx, state);
+
+  if (state.editorMode === 'edit') {
+    drawSignalConnections(ctx, state);
+  }
 
   if (state.drawingConnection) {
     // Draw connection lines (in world coordinates)
@@ -205,6 +215,21 @@ function drawDrawingConnectionLines(ctx, state) {
       }
     });
   }
+}
+
+function drawSignalConnections(ctx, state) {
+  getActiveEntities().forEach(entity => {
+    const signalSender = entity.getComponent(SignalSenderComponent);
+    const transform = entity.getComponent(TransformComponent);
+    if (signalSender && transform) {
+      signalSender.receiverComponents.forEach(receiver => {
+        const receiverTransform = receiver.entity.getComponent(TransformComponent);
+        if (receiverTransform) {
+          drawLine(ctx, transform.x, transform.y, receiverTransform.x, receiverTransform.y, 'rgb(255, 196, 0)', 2);
+        }
+      });
+    }
+  });
 }
 
 function drawEntites(ctx, state) {

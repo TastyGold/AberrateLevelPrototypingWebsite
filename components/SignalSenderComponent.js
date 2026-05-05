@@ -14,7 +14,9 @@ export class SignalSenderComponent extends Component {
   }
 
   addReceiver(receiverComponent) {
-    this.receiverComponents.push(receiverComponent);
+    if (!this.receiverComponents.includes(receiverComponent)) {
+      this.receiverComponents.push(receiverComponent);
+    }
   }
 
   removeReceiver(receiverComponent) {

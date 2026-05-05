@@ -20,6 +20,8 @@ export class SelectTool extends Tool {
 
   onExit(state) {
     console.log('Select tool deactivated');
+    state.drawingConnection = false;
+    state.drawingConnectionFromComponents = [];
   }
 
   onMouseDown(state, button) {
@@ -96,9 +98,6 @@ export class SelectTool extends Tool {
   }
 
   onKeyDown(state, key) {
-    console.log('Key down:', key);
-    console.log('Started drawing connection', config.hotkeys.drawConnection);
-    
     if (key === config.hotkeys.drawConnection) {
       this.startDrawingConnection(state);
       }
@@ -113,17 +112,17 @@ export class SelectTool extends Tool {
     // put all selected entities that have SignalSenderComponent into drawingConnectionFromComponents
     state.drawingConnectionFromComponents = [];
     state.selectedEntites.forEach(entity => {
-      console.log('Checking entity for SignalSenderComponent:', entity);
+      console.log('SelectTool: Checking entity for SignalSenderComponent:', entity);
       const signalSenderComponent = entity.getComponent(SignalSenderComponent);
       if (signalSenderComponent) {
         state.drawingConnectionFromComponents.push(signalSenderComponent);
       }
     });
-    console.log('Started drawing connection from components:', state.drawingConnectionFromComponents);
+    console.log('SelectTool: Started drawing connection from components:', state.drawingConnectionFromComponents);
     if (state.drawingConnectionFromComponents.length === 0) {
       // if no selected entities have SignalSenderComponent, cancel drawing connection
       state.drawingConnection = false;
-      console.log('No SignalSenderComponents found in selected entities, canceling drawing connection');
+      console.log('SelectTool: No SignalSenderComponents found in selected entities, canceling drawing connection');
     }
   }
 
@@ -135,8 +134,11 @@ export class SelectTool extends Tool {
     if (signalReceiverComponent) {
       state.drawingConnectionFromComponents.forEach(signalSenderComponent => {
         signalSenderComponent.addReceiver(signalReceiverComponent);
-        console.log('Finished drawing connection from', signalSenderComponent, 'to', signalReceiverComponent);
+        console.log('SelectTool: Finished drawing connection from', signalSenderComponent, 'to', signalReceiverComponent);
       });
+    }
+    else {
+      console.log('SelectTool: Target entity does not have SignalReceiverComponent, cannot finish drawing connection:', targetEntity);
     }
   }
 
