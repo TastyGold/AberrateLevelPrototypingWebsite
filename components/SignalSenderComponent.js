@@ -1,10 +1,10 @@
-import { Component } from "./Component";
+import { Component } from "./Component.js";
 
 
 export class SignalSenderComponent extends Component {
   constructor({ receiverComponents = [] } = {}) {
     super();
-    this.receiverComponents = [];
+    this.receiverComponents = receiverComponents;
   }
 
   sendSignal(strength) {

@@ -1,8 +1,8 @@
-import { Component } from "./Component";
+import { Component } from "./Component.js";
 
 
 export class SignalReceiverComponent extends Component {
-  constructor({ receiverMode = MODE_EQUALS, requiredStrength = 0 } = {}) {
+  constructor({ receiverMode = SignalReceiverComponent.MODE_EQUALS, requiredStrength = 0 } = {}) {
     super();
     this.receiverMode = receiverMode;
     this.requiredStrength = requiredStrength;

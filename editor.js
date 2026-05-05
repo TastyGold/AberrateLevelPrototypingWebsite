@@ -11,7 +11,7 @@ export const config = {
   minZoom: 0.3,
   maxZoom: 5,
   // Alt key behavior
-  altModeKey: 'c',
+  altModeKey: 'z',
   altModeTool: 'camera',
   // Hotkey settings
   enableToolHotkeys: false,
@@ -23,7 +23,8 @@ export const config = {
       room: 'r',
       erase: 't',
       playmode: 'y',
-    }
+    },
+    drawConnection: 'c',
   },
   // Hitbox settings
   showEntityCollision: false,
@@ -124,6 +125,8 @@ export const state = {
   selectedEntites: [],
   highlightedEntities: [],
   dragMoving: false,
+  drawingConnection: false,
+  drawingConnectionFromComponents: [],
 
   // Room Tool
   creatingRoom: false,

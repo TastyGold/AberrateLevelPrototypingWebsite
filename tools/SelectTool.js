@@ -2,6 +2,9 @@ import { Tool } from './Tool.js';
 import { TransformComponent } from '../components/TransformComponent.js';
 import { BoxColliderComponent } from '../components/BoxColliderComponent.js';
 import { EditorIntegrationComponent } from '../components/EditorIntegrationComponent.js';
+import { SignalSenderComponent } from '../components/SignalSenderComponent.js';
+import { SignalReceiverComponent } from '../components/SignalReceiverComponent.js';
+import { config } from '../editor.js';
 
 /**
  * Select tool for selecting and manipulating entities
@@ -22,6 +25,12 @@ export class SelectTool extends Tool {
   onMouseDown(state, button) {
     let entityAtMouse = this.findEntityAtMouse(state);
     if (entityAtMouse) {
+
+      if (state.drawingConnection) {
+        this.finishDrawingConnectionTo(state, entityAtMouse);
+        return; // don't do anything else if currently drawing connection
+      }
+
       let alreadySelected = this.addSelectableToSelection(state, entityAtMouse);
       if (alreadySelected) {
         // if entity was already selected, start drag move
@@ -41,6 +50,10 @@ export class SelectTool extends Tool {
   }
 
   onMouseMove(state) {
+    if (state.drawingConnection) {
+      return; // don't do anything else if currently drawing connection
+    }
+
     // handle drag move of selected entities
     if (state.dragMoving) {
       state.selectedEntites.forEach(entity => {
@@ -83,10 +96,48 @@ export class SelectTool extends Tool {
   }
 
   onKeyDown(state, key) {
+    console.log('Key down:', key);
+    console.log('Started drawing connection', config.hotkeys.drawConnection);
+    
+    if (key === config.hotkeys.drawConnection) {
+      this.startDrawingConnection(state);
+      }
   }
 
   onKeyUp(state, key) {
     // TODO: Implement keyboard shortcuts for select tool
+  }
+
+  startDrawingConnection(state) {
+    state.drawingConnection = true;
+    // put all selected entities that have SignalSenderComponent into drawingConnectionFromComponents
+    state.drawingConnectionFromComponents = [];
+    state.selectedEntites.forEach(entity => {
+      console.log('Checking entity for SignalSenderComponent:', entity);
+      const signalSenderComponent = entity.getComponent(SignalSenderComponent);
+      if (signalSenderComponent) {
+        state.drawingConnectionFromComponents.push(signalSenderComponent);
+      }
+    });
+    console.log('Started drawing connection from components:', state.drawingConnectionFromComponents);
+    if (state.drawingConnectionFromComponents.length === 0) {
+      // if no selected entities have SignalSenderComponent, cancel drawing connection
+      state.drawingConnection = false;
+      console.log('No SignalSenderComponents found in selected entities, canceling drawing connection');
+    }
+  }
+
+  finishDrawingConnectionTo(state, targetEntity) {
+    if (!state.drawingConnection) return;
+    state.drawingConnection = false;
+    // for each component in drawingConnectionFromComponents, add targetEntity's SignalReceiverComponent as a receiver
+    const signalReceiverComponent = targetEntity.getComponent(SignalReceiverComponent);
+    if (signalReceiverComponent) {
+      state.drawingConnectionFromComponents.forEach(signalSenderComponent => {
+        signalSenderComponent.addReceiver(signalReceiverComponent);
+        console.log('Finished drawing connection from', signalSenderComponent, 'to', signalReceiverComponent);
+      });
+    }
   }
 
   addHighlightedEntitiesToSelection(state) {

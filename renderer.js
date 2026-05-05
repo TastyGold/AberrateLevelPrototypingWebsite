@@ -44,6 +44,11 @@ export function draw(ctx, state) {
   //drawDebugCubeConnections(ctx, state);
   //drawDebugCubeParentConnections(ctx, state);
 
+  if (state.drawingConnection) {
+    // Draw connection lines (in world coordinates)
+    drawDrawingConnectionLines(ctx, state);
+  }
+
   if (state.selectedToolName === 'select' || state.editorMode === 'play') {
     // Draw selection outlines
     drawSelectionOutline(ctx, state);
@@ -184,6 +189,21 @@ function drawSelectTool(ctx, state) {
     ctx.strokeRect(x, y, w, h);
     ctx.fillStyle = 'rgba(0, 132, 255, 0.1)';
     ctx.fillRect(x, y, w, h);
+  }
+}
+
+function drawDrawingConnectionLines(ctx, state) {
+  if (state.drawingConnection) {
+    const { mouse, camera } = state;
+    const fromComponents = state.drawingConnectionFromComponents;
+    const toWorldX = mouse.worldX;
+    const toWorldY = mouse.worldY;
+    fromComponents.forEach(component => {
+      const transform = component.entity.getComponent(TransformComponent);
+      if (transform) {
+        drawLine(ctx, transform.x, transform.y, toWorldX, toWorldY, 'rgba(255, 255, 0, 0.8)', 2 / camera.zoom);
+      }
+    });
   }
 }
 
