@@ -1,5 +1,5 @@
 {
-  "name": "builder-aberrategame-com",
+  "name": "editor-aberrategame-com",
   "private": true,
   "scripts": {
     "dev": "wrangler dev",

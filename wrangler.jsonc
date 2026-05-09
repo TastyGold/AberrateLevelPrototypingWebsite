@@ -1,12 +1,12 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "builder-aberrategame-com",
+  "name": "editor-aberrategame-com",
   "compatibility_date": "2026-05-01",
   "assets": {
     "directory": "./"
   },
   "routes": [
-    { "pattern": "builder.aberrategame.com", "custom_domain": true }
+    { "pattern": "editor.aberrategame.com", "custom_domain": true }
   ],
   "observability": {
     "enabled": true
