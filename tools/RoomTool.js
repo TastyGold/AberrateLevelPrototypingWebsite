@@ -1,4 +1,5 @@
 import { Tool } from './Tool.js';
+import { history } from '../history.js';
 
 /**
  * Helper to check if two rects intersect
@@ -161,6 +162,7 @@ export class RoomTool extends Tool {
 
     // Filter out invalid/empty rects just in case
     state.rooms = updatedRooms.filter(r => r.w > 0 && r.h > 0);
+    history.saveSnapshot(state);
   }
 
   onKeyDown(state, key) {

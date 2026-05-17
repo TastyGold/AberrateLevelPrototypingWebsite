@@ -73,6 +73,7 @@ export const state = {
 
   // Editor data
   tiles: [],
+  rooms: [],
 
   // UI state
   selectedToolName: 'camera',
