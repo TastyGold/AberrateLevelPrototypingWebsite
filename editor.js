@@ -126,6 +126,7 @@ export const state = {
   dragSelecting: false,
   selectedEntites: [],
   highlightedEntities: [],
+  selectedConnections: [],
   dragMoving: false,
   drawingConnection: false,
   drawingConnectionFromComponents: [],
@@ -204,6 +205,26 @@ export function onEnterPlayMode() {
   console.log('Entered play mode');
   state.playmodePreviousToolName = state.selectedToolName;
   state.playmodeEntities = state.entities.map((entity) => entity.clone());
+
+  // Remap signal connections for playmode
+  state.playmodeEntities.forEach((playEntity, index) => {
+      const editEntity = state.entities[index];
+      const sender = playEntity.getComponent('SignalSenderComponent');
+      if (sender) {
+          const editSender = editEntity.getComponent('SignalSenderComponent');
+          sender.receiverComponents = [];
+          if (editSender && editSender.receiverComponents) {
+              editSender.receiverComponents.forEach(editReceiver => {
+                  const receiverIndex = state.entities.findIndex(e => e === editReceiver.entity);
+                  if (receiverIndex !== -1) {
+                      const playReceiver = state.playmodeEntities[receiverIndex].getComponent('SignalReceiverComponent');
+                      if (playReceiver) sender.receiverComponents.push(playReceiver);
+                  }
+              });
+          }
+      }
+  });
+
   state.editorMode = 'play';
   setTool('playmode');
   hidePlayModeUI();

@@ -5,6 +5,7 @@ import { EditorIntegrationComponent } from '../components/EditorIntegrationCompo
 import { SignalSenderComponent } from '../components/SignalSenderComponent.js';
 import { SignalReceiverComponent } from '../components/SignalReceiverComponent.js';
 import { config } from '../editor.js';
+import { history } from '../history.js';
 
 /**
  * Select tool for selecting and manipulating entities
@@ -93,18 +94,24 @@ export class SelectTool extends Tool {
 
   onMouseUp(state, button) {
     state.dragSelecting = false;
+    if (state.dragMoving) {
+      history.saveSnapshot(state);
+    }
     state.dragMoving = false;
     this.addHighlightedEntitiesToSelection(state);
   }
 
   onKeyDown(state, key) {
-    if (key === config.hotkeys.drawConnection) {
+    if (key === config.hotkeys.drawConnection && !state.input.isCtrlDown) {
       this.startDrawingConnection(state);
     } else if (key === 'Delete' || key === 'Backspace') {
-      state.selectedEntites.forEach(entity => {
-        state.removeEntityFromState(entity);
-      });
-      this.clearSelection(state);
+      if (state.selectedEntites.length > 0) {
+        state.selectedEntites.forEach(entity => {
+          state.removeEntityFromState(entity);
+        });
+        this.clearSelection(state);
+        history.saveSnapshot(state);
+      }
     }
   }
 
@@ -141,6 +148,7 @@ export class SelectTool extends Tool {
         signalSenderComponent.addReceiver(signalReceiverComponent);
         console.log('SelectTool: Finished drawing connection from', signalSenderComponent, 'to', signalReceiverComponent);
       });
+      history.saveSnapshot(state);
     }
     else {
       console.log('SelectTool: Target entity does not have SignalReceiverComponent, cannot finish drawing connection:', targetEntity);

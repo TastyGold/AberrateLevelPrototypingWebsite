@@ -5,6 +5,7 @@
 
 import { config, mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive, screenToWorld, onEntityHotkeyPressed, entityTypes, onEnterPlayMode, onExitPlayMode, state } from './editor.js';
 import { exportLevel, importLevel } from './io.js';
+import { history } from './history.js';
 
 /**
  * Generate entity buttons dynamically from entityTypes
@@ -186,6 +187,14 @@ export function setupInputHandlers(canvas, state) {
     if (lastEntity !== newEntity) {
       updateEntityButtonsUI(state);
     }
+
+    if (state.input.isCtrlDown) {
+      if (event.key.toLowerCase() === 'z') {
+        history.undo(state);
+      } else if (event.key.toLowerCase() === 'y') {
+        history.redo(state);
+      }
+    }
   });
 
   /**
@@ -283,8 +292,8 @@ export function setupInputHandlers(canvas, state) {
   // Import/Export buttons
   const exportBtn = document.getElementById('exportBtn');
   if (exportBtn) {
-    exportBtn.addEventListener('click', () => {
-      exportLevel(state);
+    exportBtn.addEventListener('click', async () => {
+      await exportLevel(state);
     });
   }
 
@@ -296,6 +305,16 @@ export function setupInputHandlers(canvas, state) {
         importLevel(state, jsonString);
       }
     });
+  }
+
+  const undoBtn = document.getElementById('undoBtn');
+  if (undoBtn) {
+    undoBtn.addEventListener('click', () => history.undo(state));
+  }
+
+  const redoBtn = document.getElementById('redoBtn');
+  if (redoBtn) {
+    redoBtn.addEventListener('click', () => history.redo(state));
   }
 
   // Paste event on window

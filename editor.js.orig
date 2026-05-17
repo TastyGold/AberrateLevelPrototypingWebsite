@@ -115,6 +115,7 @@ export const state = {
     isAltDown: false,
     isLeftMouseDown: false,
     isShiftDown: false,
+    isCtrlDown: false,
   },
 
   // Current active tool
