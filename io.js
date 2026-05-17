@@ -1,0 +1,156 @@
+import { entityTypes } from './editor.js';
+import { Entity } from './entities/Entity.js';
+
+export function exportLevel(state) {
+    const levelNameInput = document.getElementById('levelName');
+    const levelName = levelNameInput ? levelNameInput.value : 'Untitled';
+
+    const data = {
+        levelName,
+        gridSize: state.gridSize,
+        camera: state.camera,
+        tiles: state.tiles,
+        entities: []
+    };
+
+    state.entities.forEach(entity => {
+        // Safely determine the entity type key from the registry
+        const typeKey = Object.keys(entityTypes).find(key => entity instanceof entityTypes[key]) || entity.constructor.name.toLowerCase();
+
+        const entityData = {
+            id: entity.id,
+            type: typeKey,
+            color: entity.color, // specifically used by Box/etc
+            components: {}
+        };
+
+        entity.components.forEach(component => {
+            const componentName = component.constructor.name;
+            const componentData = {};
+
+            for (const key of Object.keys(component)) {
+                if (key === 'entity') continue;
+
+                if (componentName === 'SignalSenderComponent' && key === 'receiverComponents') {
+                    // special case: store receiver entity ids instead of component references
+                    componentData[key] = component[key].map(c => c.entity.id);
+                } else {
+                    componentData[key] = cloneValue(component[key]);
+                }
+            }
+
+            entityData.components[componentName] = componentData;
+        });
+
+        data.entities.push(entityData);
+    });
+
+    const jsonString = JSON.stringify(data, null, 2);
+    console.log("=== EXPORTED LEVEL JSON ===");
+    console.log(jsonString);
+    console.log("===========================");
+    return jsonString;
+}
+
+export function importLevel(state, jsonString) {
+    try {
+        const data = JSON.parse(jsonString);
+
+        // Validate it looks like a level export before mutating state
+        if (!data || !Array.isArray(data.entities)) {
+            throw new Error("Invalid level data");
+        }
+
+        if (data.levelName) {
+            const levelNameInput = document.getElementById('levelName');
+            if (levelNameInput) levelNameInput.value = data.levelName;
+        }
+
+        if (data.gridSize !== undefined) state.gridSize = data.gridSize;
+        if (data.camera) state.camera = { ...data.camera };
+        if (data.tiles) state.tiles = cloneValue(data.tiles);
+
+        state.entities = [];
+        let maxId = -1;
+
+        // First pass: recreate entities and their components (except connections)
+        data.entities.forEach(entityData => {
+            const EntityClass = entityTypes[entityData.type];
+            if (!EntityClass) {
+                console.warn(`Unknown entity type: ${entityData.type}`);
+                return;
+            }
+
+            // Create entity and pass color if present
+            const entity = new EntityClass({ color: entityData.color });
+            entity.id = entityData.id;
+            if (entity.id > maxId) maxId = entity.id;
+
+            // Re-apply component data
+            for (const [componentName, componentData] of Object.entries(entityData.components)) {
+                // Find matching component on newly created entity
+                const component = entity.components.find(c => c.constructor.name === componentName);
+                if (component) {
+                    for (const key of Object.keys(componentData)) {
+                        if (componentName === 'SignalSenderComponent' && key === 'receiverComponents') {
+                            // Handled in second pass
+                            continue;
+                        }
+                        component[key] = cloneValue(componentData[key]);
+                    }
+                }
+            }
+
+            // if Box has specific color handling, make sure it applies
+            if (entity.setCubeColor && entityData.color !== undefined) {
+                entity.setCubeColor(entityData.color);
+            }
+
+            state.entities.push(entity);
+        });
+
+        // Second pass: reconnect signals
+        data.entities.forEach(entityData => {
+            const senderData = entityData.components['SignalSenderComponent'];
+            if (senderData && senderData.receiverComponents) {
+                const senderEntity = state.entities.find(e => e.id === entityData.id);
+                if (senderEntity) {
+                    const senderComponent = senderEntity.components.find(c => c.constructor.name === 'SignalSenderComponent');
+                    if (senderComponent) {
+                        senderComponent.receiverComponents = [];
+                        senderData.receiverComponents.forEach(receiverEntityId => {
+                            const receiverEntity = state.entities.find(e => e.id === receiverEntityId);
+                            if (receiverEntity) {
+                                const receiverComponent = receiverEntity.components.find(c => c.constructor.name === 'SignalReceiverComponent');
+                                if (receiverComponent) {
+                                    senderComponent.receiverComponents.push(receiverComponent);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+        Entity.nextEntityID = maxId + 1;
+
+    } catch (e) {
+        console.error("Failed to import level:", e);
+    }
+}
+
+function cloneValue(value) {
+    if (Array.isArray(value)) {
+        return value.map(cloneValue);
+    }
+    if (value && typeof value === 'object' && value.constructor === Object) {
+        const copy = {};
+        for (const key in value) {
+            if (Object.prototype.hasOwnProperty.call(value, key)) {
+                copy[key] = cloneValue(value[key]);
+            }
+        }
+        return copy;
+    }
+    return value;
+}
