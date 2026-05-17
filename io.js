@@ -10,6 +10,7 @@ export async function exportLevel(state) {
         gridSize: state.gridSize,
         camera: state.camera,
         tiles: state.tiles,
+        rooms: state.rooms,
         entities: []
     };
 
@@ -96,6 +97,7 @@ export function importLevel(state, jsonString) {
         if (data.gridSize !== undefined) state.gridSize = data.gridSize;
         if (data.camera) state.camera = { ...data.camera };
         if (data.tiles) state.tiles = cloneValue(data.tiles);
+        if (data.rooms) state.rooms = cloneValue(data.rooms);
 
         state.entities = [];
         let maxId = -1;

@@ -73,7 +73,6 @@ export const state = {
 
   // Editor data
   tiles: [],
-  rooms: [],
 
   // UI state
   selectedToolName: 'camera',
@@ -131,7 +130,7 @@ export const state = {
 
   // Room Tool
   creatingRoom: false,
-  
+
   // Entity Tool
   selectedEntityType: 'box', // Default
   placingEntity: false, // Whether we're currently placing an entity (for click-and-drag)
@@ -408,7 +407,7 @@ export function setTile(gridX, gridY, tileType) {
 
   let foundIndex = state.tiles.findIndex(t => t.x === gridX && t.y === gridY);
   if (foundIndex !== -1) {
-    state.tiles[foundIndex].type = tileType; // Update existing tile  
+    state.tiles[foundIndex].type = tileType; // Update existing tile
   } else {
     state.tiles.push({ x: gridX, y: gridY, type: tileType }); // Add new tile
   }
