@@ -6,6 +6,7 @@ import { SignalSenderComponent } from '../components/SignalSenderComponent.js';
 import { SignalReceiverComponent } from '../components/SignalReceiverComponent.js';
 import { config } from '../editor.js';
 import { history } from '../history.js';
+import { updateSettingsPanel } from '../updateSettingsPanel.js';
 
 /**
  * Select tool for selecting and manipulating entities
@@ -41,6 +42,43 @@ export class SelectTool extends Tool {
       }
     }
     if (!state.dragMoving) {
+      // Check for connection line selection if no entity is under mouse
+      if (!entityAtMouse && !state.input.isShiftDown) {
+        let closestConn = null;
+        let closestDist = Infinity;
+
+        for (const entity of state.entities) {
+            const sender = entity.getComponent(SignalSenderComponent);
+            const tx = entity.getComponent(TransformComponent);
+            if (sender && tx) {
+                for (const receiver of sender.receiverComponents) {
+                    const rx = receiver.entity.getComponent(TransformComponent);
+                    if (rx) {
+                        const dist = this.pointLineDistance(state.mouse.worldX, state.mouse.worldY, tx.x, tx.y, rx.x, rx.y);
+                        if (dist < 10 && dist < closestDist) {
+                            closestDist = dist;
+                            closestConn = { sender, receiver };
+                        }
+                    }
+                }
+            }
+        }
+
+        if (closestConn) {
+            state.selectedConnections = [closestConn];
+            this.clearSelection(state);
+            updateSettingsPanel(state);
+            return;
+        } else {
+            if (state.selectedConnections && state.selectedConnections.length > 0) {
+                state.selectedConnections = [];
+                updateSettingsPanel(state);
+            }
+        }
+      } else {
+          state.selectedConnections = [];
+      }
+
       state.dragSelecting = true;
 
       if (!state.input.isShiftDown) {
@@ -99,18 +137,33 @@ export class SelectTool extends Tool {
     }
     state.dragMoving = false;
     this.addHighlightedEntitiesToSelection(state);
+    updateSettingsPanel(state);
   }
 
   onKeyDown(state, key) {
     if (key === config.hotkeys.drawConnection && !state.input.isCtrlDown) {
       this.startDrawingConnection(state);
     } else if (key === 'Delete' || key === 'Backspace') {
+      let deletedSomething = false;
+      if (state.selectedConnections && state.selectedConnections.length > 0) {
+        state.selectedConnections.forEach(conn => {
+            conn.sender.receiverComponents = conn.sender.receiverComponents.filter(r => r !== conn.receiver);
+        });
+        state.selectedConnections = [];
+        deletedSomething = true;
+      }
+
       if (state.selectedEntites.length > 0) {
         state.selectedEntites.forEach(entity => {
           state.removeEntityFromState(entity);
         });
         this.clearSelection(state);
+        deletedSomething = true;
+      }
+
+      if (deletedSomething) {
         history.saveSnapshot(state);
+        updateSettingsPanel(state);
       }
     }
   }
@@ -214,5 +267,23 @@ export class SelectTool extends Tool {
       editorIntegrationComponent.onUnhighlighted();
     }
     state.highlightedEntities = state.highlightedEntities.filter(selectedEntity => selectedEntity.id !== entity.id);
+  }
+
+  pointLineDistance(px, py, x1, y1, x2, y2) {
+    const A = px - x1;
+    const B = py - y1;
+    const C = x2 - x1;
+    const D = y2 - y1;
+    const dot = A * C + B * D;
+    const len_sq = C * C + D * D;
+    let param = -1;
+    if (len_sq != 0) param = dot / len_sq;
+    let xx, yy;
+    if (param < 0) { xx = x1; yy = y1; }
+    else if (param > 1) { xx = x2; yy = y2; }
+    else { xx = x1 + param * C; yy = y1 + param * D; }
+    const dx = px - xx;
+    const dy = py - yy;
+    return Math.sqrt(dx * dx + dy * dy);
   }
 }

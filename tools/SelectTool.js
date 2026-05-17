@@ -156,6 +156,13 @@ export class SelectTool extends Tool {
       if (state.selectedEntites.length > 0) {
         state.selectedEntites.forEach(entity => {
           state.removeEntityFromState(entity);
+          // Clean up dangling connections to this entity
+          state.entities.forEach(other => {
+              const sender = other.getComponent(SignalSenderComponent);
+              if (sender && sender.receiverComponents) {
+                  sender.receiverComponents = sender.receiverComponents.filter(r => r.entity !== entity);
+              }
+          });
         });
         this.clearSelection(state);
         deletedSomething = true;
