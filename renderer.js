@@ -320,7 +320,12 @@ function drawSignalConnections(ctx, state) {
       signalSender.receiverComponents.forEach(receiver => {
         const receiverTransform = receiver.entity.getComponent(TransformComponent);
         if (receiverTransform) {
-          drawLine(ctx, transform.x, transform.y, receiverTransform.x, receiverTransform.y, 'rgb(255, 196, 0)', 2);
+          const isSelected = state.selectedConnections && state.selectedConnections.some(conn => conn.sender === signalSender && conn.receiver === receiver);
+          if (isSelected) {
+            drawLine(ctx, transform.x, transform.y, receiverTransform.x, receiverTransform.y, 'rgba(255, 100, 0, 1)', 4 / state.camera.zoom);
+          } else {
+            drawLine(ctx, transform.x, transform.y, receiverTransform.x, receiverTransform.y, 'rgb(255, 196, 0)', 2 / state.camera.zoom);
+          }
         }
       });
     }

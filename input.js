@@ -6,6 +6,7 @@
 import { config, mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive, screenToWorld, onEntityHotkeyPressed, entityTypes, onEnterPlayMode, onExitPlayMode, state } from './editor.js';
 import { exportLevel, importLevel } from './io.js';
 import { history } from './history.js';
+import { updateSettingsPanel } from './updateSettingsPanel.js';
 
 /**
  * Generate entity buttons dynamically from entityTypes
@@ -81,6 +82,11 @@ function updateToolButtonsUI() {
         button.classList.add('active');
       }
     }
+  });
+
+  // Setup entity settings update listener
+  window.addEventListener('entityPropertyChanged', (e) => {
+    history.saveSnapshot(state);
   });
 }
 
@@ -355,5 +361,10 @@ export function setupInputHandlers(canvas, state) {
         }
       }
     }
+  });
+
+  // Setup entity settings update listener
+  window.addEventListener('entityPropertyChanged', (e) => {
+    history.saveSnapshot(state);
   });
 }

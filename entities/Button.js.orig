@@ -61,8 +61,7 @@ export class Button extends Entity {
 
     checkPowered(dt) {
         const myCollider = this.getComponent(BoxColliderComponent);
-        const myTransform = this.getComponent(TransformComponent);
-        if (!myCollider || !myTransform) return;
+        if (!myCollider) return;
 
         let isPowered = false;
 
@@ -70,23 +69,9 @@ export class Button extends Entity {
         playmodeEntities.forEach(entity => {
             if (entity instanceof Box) {
                 const boxCollider = entity.getComponent(BoxColliderComponent);
-                const boxTransform = entity.getComponent(TransformComponent);
-                if (boxCollider && boxTransform) {
-                    // Manual AABB intersection just to be perfectly safe
-                    const minX1 = myTransform.x - myCollider.width/2;
-                    const maxX1 = myTransform.x + myCollider.width/2;
-                    const minY1 = myTransform.y - myCollider.height/2;
-                    const maxY1 = myTransform.y + myCollider.height/2;
-
-                    const minX2 = boxTransform.x - boxCollider.width/2;
-                    const maxX2 = boxTransform.x + boxCollider.width/2;
-                    const minY2 = boxTransform.y - boxCollider.height/2;
-                    const maxY2 = boxTransform.y + boxCollider.height/2;
-
-                    if (minX1 < maxX2 && maxX1 > minX2 && minY1 < maxY2 && maxY1 > minY2) {
-                        if (!this.whiteOnly || entity.color === Box.BOX_COLOR_WHITE) {
-                            isPowered = true;
-                        }
+                if (boxCollider && myCollider.intersects(boxCollider)) {
+                    if (!this.whiteOnly || entity.color === Box.BOX_COLOR_WHITE) {
+                        isPowered = true;
                     }
                 }
             }
