@@ -1,7 +1,7 @@
 import { entityTypes } from './editor.js';
 import { Entity } from './entities/Entity.js';
 
-export async function exportLevel(state) {
+export function serializeLevel(state) {
     const levelNameInput = document.getElementById('levelName');
     const levelName = levelNameInput ? levelNameInput.value : 'Untitled';
 
@@ -15,13 +15,12 @@ export async function exportLevel(state) {
     };
 
     state.entities.forEach(entity => {
-        // Safely determine the entity type key from the registry
         const typeKey = Object.keys(entityTypes).find(key => entity instanceof entityTypes[key]) || entity.constructor.name.toLowerCase();
 
         const entityData = {
             id: entity.id,
             type: typeKey,
-            color: entity.color, // specifically used by Box/etc
+            color: entity.color,
             components: {}
         };
 
@@ -33,7 +32,6 @@ export async function exportLevel(state) {
                 if (key === 'entity') continue;
 
                 if (componentName === 'SignalSenderComponent' && key === 'receiverComponents') {
-                    // special case: store receiver entity ids instead of component references
                     componentData[key] = component[key].map(c => c.entity.id);
                 } else {
                     componentData[key] = cloneValue(component[key]);
@@ -46,7 +44,13 @@ export async function exportLevel(state) {
         data.entities.push(entityData);
     });
 
-    const jsonString = JSON.stringify(data, null, 2);
+    return JSON.stringify(data, null, 2);
+}
+
+export async function exportLevel(state) {
+    const jsonString = serializeLevel(state);
+    const levelNameInput = document.getElementById('levelName');
+    const levelName = levelNameInput ? levelNameInput.value : 'Untitled';
     console.log("=== EXPORTED LEVEL JSON ===");
     console.log(jsonString);
     console.log("===========================");
@@ -98,6 +102,12 @@ export function importLevel(state, jsonString) {
         if (data.camera) state.camera = { ...data.camera };
         if (data.tiles) state.tiles = cloneValue(data.tiles);
         if (data.rooms) state.rooms = cloneValue(data.rooms);
+
+        // Clear ephemeral UI selection state to avoid stale references
+        state.selectedEntites = [];
+        state.highlightedEntities = [];
+        state.dragMoving = false;
+        state.dragSelecting = false;
 
         state.entities = [];
         let maxId = -1;

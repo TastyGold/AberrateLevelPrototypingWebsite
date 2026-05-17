@@ -18,8 +18,6 @@
         <button id="hitboxBtn" data-inactiveText="Show Hitboxes" data-activeText="Hide Hitboxes"></button>
         <button id="hotkeyBtn" data-inactiveText="Show Hotkeys" data-activeText="Hide Hotkeys"></button>
         <button id="importBtn">Import</button>
-        <button id="undoBtn">Undo</button>
-        <button id="redoBtn">Redo</button>
         <button id="exportBtn">Export</button>
       </div>
     </div>
