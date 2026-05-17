@@ -4,6 +4,7 @@
  */
 
 import { config, mouseDown, mouseUp, keyDown, keyUp, mouseMove, zoom, setTool, activateAltOverride, deactivateAltOverride, getCurrentTool, getPreviousTool, isAltOverrideActive, screenToWorld, onEntityHotkeyPressed, entityTypes, onEnterPlayMode, onExitPlayMode, state } from './editor.js';
+import { exportLevel, importLevel } from './io.js';
 
 /**
  * Generate entity buttons dynamically from entityTypes
@@ -278,4 +279,62 @@ export function setupInputHandlers(canvas, state) {
 
     updatePlayModeButton();
   }
+
+  // Import/Export buttons
+  const exportBtn = document.getElementById('exportBtn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+      exportLevel(state);
+    });
+  }
+
+  const importBtn = document.getElementById('importBtn');
+  if (importBtn) {
+    importBtn.addEventListener('click', () => {
+      const jsonString = prompt('Paste level JSON here:');
+      if (jsonString) {
+        importLevel(state, jsonString);
+      }
+    });
+  }
+
+  // Paste event on window
+  window.addEventListener('paste', (event) => {
+    const text = event.clipboardData.getData('text');
+    if (text) {
+      try {
+        // Try to parse to see if it's JSON
+        const data = JSON.parse(text);
+        if (data && Array.isArray(data.entities)) {
+          importLevel(state, text);
+        }
+      } catch (e) {
+        // Not JSON or invalid JSON
+      }
+    }
+  });
+
+  // Drag and drop events for JSON files
+  const container = document.getElementById('canvasContainer') || window;
+  container.addEventListener('dragover', (event) => {
+    event.preventDefault(); // necessary to allow dropping
+  });
+
+  container.addEventListener('drop', (event) => {
+    event.preventDefault();
+    if (event.dataTransfer.items) {
+      for (let i = 0; i < event.dataTransfer.items.length; i++) {
+        if (event.dataTransfer.items[i].kind === 'file') {
+          const file = event.dataTransfer.items[i].getAsFile();
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const text = e.target.result;
+            importLevel(state, text);
+          };
+          reader.readAsText(file);
+          break; // just read the first file
+        }
+      }
+    }
+  });
 }
