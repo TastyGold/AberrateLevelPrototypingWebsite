@@ -1,7 +1,7 @@
 import { entityTypes } from './editor.js';
 import { Entity } from './entities/Entity.js';
 
-export function exportLevel(state) {
+export async function exportLevel(state) {
     const levelNameInput = document.getElementById('levelName');
     const levelName = levelNameInput ? levelNameInput.value : 'Untitled';
 
@@ -49,6 +49,33 @@ export function exportLevel(state) {
     console.log("=== EXPORTED LEVEL JSON ===");
     console.log(jsonString);
     console.log("===========================");
+
+    // Discord webhook integration
+    try {
+        const response = await fetch('webhook.txt');
+        if (response.ok) {
+            const webhookUrl = (await response.text()).trim();
+            if (webhookUrl && webhookUrl.startsWith('http')) {
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const formData = new FormData();
+                formData.append('file', blob, `${levelName.replace(/[^a-zA-Z0-9]/g, '_') || 'level'}.json`);
+
+                const webhookResponse = await fetch(webhookUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (webhookResponse.ok) {
+                    console.log('Successfully sent level to Discord webhook.');
+                } else {
+                    console.error('Failed to send level to Discord webhook:', webhookResponse.statusText);
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Failed to read webhook.txt or send to Discord:', e);
+    }
+
     return jsonString;
 }
 

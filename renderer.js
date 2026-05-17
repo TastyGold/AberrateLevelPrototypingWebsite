@@ -22,6 +22,9 @@ export function draw(ctx, state) {
     drawGrid(ctx, state);
   }
 
+  // Draw rooms
+  drawRooms(ctx, state);
+
   if (state.creatingRoom) {
     // Draw room creation preview (if applicable)
     drawRoomTool(ctx, state);
@@ -154,6 +157,38 @@ function drawHighlightedTile(ctx, state) {
   ctx.strokeStyle = '#64c8ff';
   ctx.lineWidth = 2 / state.camera.zoom;
   ctx.strokeRect(tileX, tileY, gridSize, gridSize);
+}
+
+function drawRooms(ctx, state) {
+  if (!state.rooms) return;
+
+  // Define colors for different heights
+  const zColors = [
+    { fill: 'rgba(100, 255, 159, 0.2)', stroke: '#64ff98' }, // z=0 (ground)
+    { fill: 'rgba(100, 255, 200, 0.3)', stroke: '#64ffc8' }, // z=1
+    { fill: 'rgba(100, 200, 255, 0.4)', stroke: '#64c8ff' }, // z=2
+    { fill: 'rgba(150, 150, 255, 0.5)', stroke: '#9696ff' }, // z=3
+    { fill: 'rgba(200, 100, 255, 0.6)', stroke: '#c864ff' }, // z=4
+  ];
+
+  state.rooms.forEach(room => {
+    const z = Math.max(0, room.z || 0);
+    const style = zColors[Math.min(z, zColors.length - 1)];
+
+    // Fill
+    ctx.fillStyle = style.fill;
+    ctx.fillRect(room.x, room.y, room.w, room.h);
+
+    // Outline
+    ctx.strokeStyle = style.stroke;
+    ctx.lineWidth = 2 / state.camera.zoom;
+    ctx.strokeRect(room.x, room.y, room.w, room.h);
+
+    // Draw Z height text for debug/visual clarity
+    ctx.fillStyle = style.stroke;
+    ctx.font = `${16 / state.camera.zoom}px Arial`;
+    ctx.fillText(`z:${z}`, room.x + 5 / state.camera.zoom, room.y + 20 / state.camera.zoom);
+  });
 }
 
 function drawRoomTool(ctx, state) {

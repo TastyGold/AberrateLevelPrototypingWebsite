@@ -41,7 +41,7 @@ export class SelectTool extends Tool {
     }
     if (!state.dragMoving) {
       state.dragSelecting = true;
-      
+
       if (!state.input.isShiftDown) {
         this.clearSelection(state);
         if (entityAtMouse) {
@@ -100,12 +100,7 @@ export class SelectTool extends Tool {
   onKeyDown(state, key) {
     if (key === config.hotkeys.drawConnection) {
       this.startDrawingConnection(state);
-    } else if (key === 'Delete' || key === 'Backspace') {
-      state.selectedEntites.forEach(entity => {
-        state.removeEntityFromState(entity);
-      });
-      this.clearSelection(state);
-    }
+      }
   }
 
   onKeyUp(state, key) {
