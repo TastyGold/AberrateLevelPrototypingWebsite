@@ -62,7 +62,8 @@ export class Button extends Entity {
     checkPowered(dt) {
         const myCollider = this.getComponent(BoxColliderComponent);
         const myTransform = this.getComponent(TransformComponent);
-        if (!myCollider || !myTransform) return;
+        const sender = this.getComponent(SignalSenderComponent);
+        if (!myCollider || !myTransform || !sender) return;
 
         let isPowered = false;
 
@@ -92,9 +93,6 @@ export class Button extends Entity {
             }
         });
 
-        const sender = this.getComponent(SignalSenderComponent);
-        if (sender) {
-            sender.setSignalState(isPowered ? 1 : 0);
-        }
+        sender.setSignalState(isPowered ? 1 : 0);
     }
 }
